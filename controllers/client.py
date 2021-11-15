@@ -11,9 +11,6 @@ from database import client
 
 def record(path, fname, test = None):
 
-    if test is not None:
-        return
-    
     data = {
         'path': path,
         'fname': fname,
@@ -21,6 +18,9 @@ def record(path, fname, test = None):
         'datatime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
         'uxtime': time.time()
     }
+
+    if test is not None:
+        return data
 
     client.insert_item(data)
     return data

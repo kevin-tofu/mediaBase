@@ -93,15 +93,25 @@ class media_base():
         # self.mp_pose = mp.solutions.pose
         # self.mp_drawing = mp.solutions.drawing_utils
         # self.mp_drawing_styles = mp.solutions.drawing_styles
-        # parse.draw_keypoint2image(image, path_data+fname_ex,\
+        # parse.draw_info2image(image, path_data+fname_ex,\
         #                              mp_pose, mp_drawing, mp_drawing_styles)
-        # self.draw_keypoint2video(path_data+fname, path_data+fname_ex)
-        # get_coco
-        self.draw_keypoint2image = None
-        self.draw_keypoint2video = None
-        self.get_coco = None
+        # self.draw_info2video(path_data+fname, path_data+fname_ex)
+        # get_info_image
+        # self.draw_info2image = None
+        # self.draw_info2video = None
+        # self.get_info_image = None
+        # self.get_info_videeo = None
         pass
 
+    def draw_info2image(self, fpath_org, fpath_ex):
+        raise NotImplementedError()
+    def draw_info2video(self, fpath_org, fpath_ex):
+        raise NotImplementedError()
+    def draw_info2video(self, fpath_org):
+        raise NotImplementedError()
+    def draw_info2video(self, fpath_org):
+        raise NotImplementedError()
+    
     async def post_image_(self, file, test = None):
         
         logger.debug("post_image_")
@@ -114,7 +124,7 @@ class media_base():
         
         logger.info(fname)
         try:
-            self.draw_keypoint2image(image, path_data+fname_ex) 
+            self.draw_info2image(image, path_data+fname_ex) 
 
             data_org = myclient.record(path_data, fname, test)
             data_ex = myclient.record(path_data, fname_ex, test)
@@ -136,8 +146,7 @@ class media_base():
             fname_ex = get_fname_video_key(fname)
             await save_video(path_data, fname, file, test)
 
-            # parse.draw_keypoint2video(path_data+fname, path_data+fname_ex, mp_pose, mp_drawing, mp_drawing_styles)
-            self.draw_keypoint2video(path_data+fname, path_data+fname_ex)
+            self.draw_info2video(path_data+fname, path_data+fname_ex)
             data_org = myclient.record(path_data, fname, test)
             data_ex = myclient.record(path_data, fname_ex, test)
                 
@@ -188,7 +197,7 @@ class media_base():
             raise HTTPException(status_code=500, detail='Error')
 
 
-    async def post_coco_image_(self, file, test):
+    async def post_info_image(self, file, test):
 
         logger.debug("post_coco_image_")
         logger.info(f'{file.filename}, {file.content_type}')
@@ -199,7 +208,7 @@ class media_base():
 
         try:
             # coco_image, coco_annotations, coco_categories = \
-            #     parse.get_cocokeypoint_from_image(path_data+fname, mp_pose)
+            #     parse.get_info_imagekeypoint_from_image(path_data+fname, mp_pose)
             
             # result = {'images': coco_image,\
             #         'annotations': coco_annotations,\
@@ -209,8 +218,33 @@ class media_base():
             #         'info': fmt_coco.make_coco_info('original', '', url='', version='1.0'),\
             #         'licenses': [],\
             # }
-            result = self.get_coco(path_data+fname)
+            result = self.get_info_image(path_data+fname)
             
+            logger.debug(result)
+            with open(path_data + fname_json, 'w') as outfile:
+                json.dump(result, outfile)
+                myclient.record(path_data, fname_json, test)
+            logger.info(f'saved: {path_data + fname_json}')
+            
+        except:
+            raise HTTPException(status_code=503, detail="Error") 
+        # finally:
+        #     pass
+        
+        return result
+
+
+    async def post_info_video(self, file, test):
+
+        logger.debug("post_coco_video")
+        logger.info(f'{file.filename}, {file.content_type}')
+        error_handling_video(file)
+        fname = file.filename
+        fname_json = fname + '-video.json'
+        await save_video(path_data, fname, file, test)
+        
+        try:
+            result = self.get_info_video(path_data+fname)
             logger.debug(result)
             with open(path_data + fname_json, 'w') as outfile:
                 json.dump(result, outfile)
