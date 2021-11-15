@@ -15,10 +15,8 @@ from skimage import io as sk_io
 from PIL import Image
 from io import BytesIO
 import shutil
-import mediapipe as mp
 from format_annotation import fmt_coco
 
-from mediapipe_if import parse
 from controllers import client as myclient
 
 
@@ -89,18 +87,6 @@ async def save_video(path, fname, file, test):
 
 class media_base():
     def __init__(self):
-        # from mediapipe_if.visualization import draw_keypoint2img
-        # self.mp_pose = mp.solutions.pose
-        # self.mp_drawing = mp.solutions.drawing_utils
-        # self.mp_drawing_styles = mp.solutions.drawing_styles
-        # parse.draw_info2image(image, path_data+fname_ex,\
-        #                              mp_pose, mp_drawing, mp_drawing_styles)
-        # self.draw_info2video(path_data+fname, path_data+fname_ex)
-        # get_info_image
-        # self.draw_info2image = None
-        # self.draw_info2video = None
-        # self.get_info_image = None
-        # self.get_info_videeo = None
         pass
 
     def draw_info2image(self, fpath_org, fpath_ex):
