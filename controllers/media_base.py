@@ -15,8 +15,8 @@ from skimage import io as sk_io
 from PIL import Image
 from io import BytesIO
 import shutil
-from format_annotation import fmt_coco
 
+sys.path.append('./mediaBase/')
 from controllers import client as myclient
 
 
