@@ -14,7 +14,7 @@ def record(path, fname, test = None):
     data = {
         'path': path,
         'fname': fname,
-        'id_data': str(uuid.uuid()),
+        'id_data': str(uuid.uuid4()),
         'datatime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
         'uxtime': time.time()
     }
