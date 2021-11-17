@@ -98,9 +98,11 @@ class media_base():
     def draw_info2video(self, fpath_org):
         raise NotImplementedError()
     
-    async def post_image_(self, file, test = None):
+    async def post_image_(self, file, **kwargs):
         
         logger.debug("post_image_")
+        test = kwargs['test']
+
         myclient.flush(test)
 
         error_handling_image(file)
@@ -120,9 +122,10 @@ class media_base():
 
         return {'status': 'OK', 'id_data': data_ex['id_data']}
 
-    async def post_video_(file, test = None):
+    async def post_video_(file, **kwargs):
         
         logger.debug("post_video_")
+        test = kwargs['test']
         myclient.flush(test)
         logger.info(f'{file.filename}, {file.content_type}')
         error_handling_video(file)
@@ -142,9 +145,10 @@ class media_base():
         return {'status': 'OK', 'id_data': data_ex['id_data']}
 
 
-    def get_image_(self, id_data=None, test=None):
+    def get_image_(self, id_data=None, **kwargs):
         
         logger.debug("get_image_")
+        test = kwargs['test']
         print(id_data)
         
         data = myclient.get_dataFrom_id_data(id_data)
@@ -162,9 +166,10 @@ class media_base():
             raise HTTPException(status_code=500, detail='Error')
             
             
-    def get_video_(self, id_data=None, test=None):
+    def get_video_(self, id_data=None, **kwargs):
         
         logger.debug("get_video_")
+        test = kwargs['test']
         print(id_data)
         
         data = myclient.get_dataFrom_id_data(id_data)
@@ -183,28 +188,20 @@ class media_base():
             raise HTTPException(status_code=500, detail='Error')
 
 
-    async def post_info_image(self, file, test):
+    async def post_info_image(self, file, **kwargs):
 
+        
         logger.debug("post_coco_image_")
         logger.info(f'{file.filename}, {file.content_type}')
+        test = kwargs['test']
+
         error_handling_image(file)
         fname = file.filename
         fname_json = fname + '-image.json'
         await save_image(path_data, fname, file, test)
 
         try:
-            # coco_image, coco_annotations, coco_categories = \
-            #     parse.get_info_imagekeypoint_from_image(path_data+fname, mp_pose)
-            
-            # result = {'images': coco_image,\
-            #         'annotations': coco_annotations,\
-            #         'annotations_bbox': [],\
-            #         'categories': coco_categories,\
-            #         'categories_bbox': [],\
-            #         'info': fmt_coco.make_coco_info('original', '', url='', version='1.0'),\
-            #         'licenses': [],\
-            # }
-            result = self.get_info_image(path_data+fname)
+            result = self.get_info_image(path_data+fname, **kwargs)
             
             logger.debug(result)
             with open(path_data + fname_json, 'w') as outfile:
@@ -220,10 +217,12 @@ class media_base():
         return result
 
 
-    async def post_info_video(self, file, test):
+    async def post_info_video(self, file, **kwargs):
 
         logger.debug("post_coco_video")
         logger.info(f'{file.filename}, {file.content_type}')
+        test = kwargs['test']
+        
         error_handling_video(file)
         fname = file.filename
         fname_json = fname + '-video.json'
