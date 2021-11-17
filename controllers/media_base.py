@@ -89,13 +89,16 @@ class media_base():
     def __init__(self):
         pass
 
-    def draw_info2image(self, fpath_org, fpath_ex):
+    def draw_info2image(self, image, fpath_ex, **kwargs):
         raise NotImplementedError()
-    def draw_info2video(self, fpath_org, fpath_ex):
+    
+    def draw_info2video(self, fpath_org, fpath_ex, **kwargs):
         raise NotImplementedError()
-    def draw_info2video(self, fpath_org):
+    
+    def get_info_image(self, image, **kwargs):
         raise NotImplementedError()
-    def draw_info2video(self, fpath_org):
+
+    def get_info_video(self, fpath_org, **kwargs):
         raise NotImplementedError()
     
     async def post_image_(self, file, **kwargs):
