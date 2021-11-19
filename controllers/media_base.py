@@ -114,8 +114,10 @@ class media_base():
         image = await read_save_image(path_data, fname, file, test)
         
         logger.info(fname)
+
+        self.draw_info2image(image, path_data+fname_ex, **kwargs) 
         try:
-            self.draw_info2image(image, path_data+fname_ex) 
+            
 
             data_org = myclient.record(path_data, fname, test)
             data_ex = myclient.record(path_data, fname_ex, test)
@@ -127,7 +129,7 @@ class media_base():
 
     async def post_video_(file, **kwargs):
         
-        logger.debug("post_video_")
+        logger.info("post_video_")
         test = kwargs['test']
         myclient.flush(test)
         logger.info(f'{file.filename}, {file.content_type}')
@@ -138,7 +140,7 @@ class media_base():
             fname_ex = get_fname_video_key(fname)
             await save_video(path_data, fname, file, test)
 
-            self.draw_info2video(path_data+fname, path_data+fname_ex)
+            self.draw_info2video(path_data+fname, path_data+fname_ex, **kwargs)
             data_org = myclient.record(path_data, fname, test)
             data_ex = myclient.record(path_data, fname_ex, test)
                 
@@ -148,18 +150,20 @@ class media_base():
         return {'status': 'OK', 'id_data': data_ex['id_data']}
 
 
-    def get_image_(self, id_data=None, **kwargs):
+    def get_image_(self, id_data, **kwargs):
         
-        logger.debug("get_image_")
+
+        logger.info("get_image_")
+        logger.info(f"id_data: {id_data}")
+        if id_data is None:
+            raise HTTPException(status_code=400, detail="Value Error") 
+
         test = kwargs['test']
-        print(id_data)
-        
         data = myclient.get_dataFrom_id_data(id_data)
         if 'fname' in data.keys():
             path_export = path_data + data['fname']
         else:
             raise HTTPException(status_code=400, detail='Error')
-
 
         logger.info(f'export: {path_export}')
 
@@ -232,7 +236,7 @@ class media_base():
         await save_video(path_data, fname, file, test)
         
         try:
-            result = self.get_info_video(path_data+fname)
+            result = self.get_info_video(path_data+fname, **kwargs)
             logger.debug(result)
             with open(path_data + fname_json, 'w') as outfile:
                 json.dump(result, outfile)
