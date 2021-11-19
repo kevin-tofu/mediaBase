@@ -51,22 +51,22 @@ async def read_image(file) -> Image.Image:
     image = Image.open(BytesIO(await file.read()))
     return np.asarray(image)
 
-async def save_image(path, fname, file, test):
+async def save_image(_path, _fname, file, test):
     try:
-        logger.debug("save_image")
+        logger.info("save_image")
         image = Image.open(BytesIO(await file.read()))
-        image.save(path + fname)
-        myclient.record(path, fname, test)
+        image.save(f"{_path}{_fname}")
+        myclient.record(_path, _fname, test)
     except:
         raise HTTPException(status_code=400, detail='File Definition Error')
 
 async def read_save_image(_path, _fname, _file, test):
     
-    logger.debug("save_image")
+    logger.info(f"save_image: {_path}{_fname}")
     try:
         ret = None
         image = Image.open(BytesIO(await _file.read()))
-        image.save(_path + _fname)
+        image.save(f"{_path}{_fname}")
         ret = np.asarray(image)
 
     except:
@@ -127,7 +127,7 @@ class media_base():
 
         return {'status': 'OK', 'id_data': data_ex['id_data']}
 
-    async def post_video_(file, **kwargs):
+    async def post_video_(self, file, **kwargs):
         
         logger.info("post_video_")
         test = kwargs['test']
@@ -195,20 +195,23 @@ class media_base():
             raise HTTPException(status_code=500, detail='Error')
 
 
-    async def post_info_image(self, file, **kwargs):
+    async def post_info_image_(self, file, **kwargs):
 
-        
         logger.debug("post_coco_image_")
         logger.info(f'{file.filename}, {file.content_type}')
         test = kwargs['test']
 
+        myclient.flush(test)
+
         error_handling_image(file)
         fname = file.filename
+        image = await read_save_image(path_data, fname, file, test)
+
         fname_json = fname + '-image.json'
-        await save_image(path_data, fname, file, test)
 
         try:
-            result = self.get_info_image(path_data+fname, **kwargs)
+            # result = self.get_info_image(path_data+fname, **kwargs)
+            result = self.get_info_image(f"{path_data}{fname}", **kwargs)
             
             logger.debug(result)
             with open(path_data + fname_json, 'w') as outfile:
@@ -224,7 +227,7 @@ class media_base():
         return result
 
 
-    async def post_info_video(self, file, **kwargs):
+    async def post_info_video_(self, file, **kwargs):
 
         logger.debug("post_coco_video")
         logger.info(f'{file.filename}, {file.content_type}')
@@ -236,7 +239,7 @@ class media_base():
         await save_video(path_data, fname, file, test)
         
         try:
-            result = self.get_info_video(path_data+fname, **kwargs)
+            result = self.get_info_video(f"{path_data}{fname}", **kwargs)
             logger.debug(result)
             with open(path_data + fname_json, 'w') as outfile:
                 json.dump(result, outfile)
