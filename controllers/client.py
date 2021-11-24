@@ -14,7 +14,7 @@ def record(path, fname, test = None):
     data = {
         'path': path,
         'fname': fname,
-        'id_data': str(uuid.uuid4()),
+        'idData': str(uuid.uuid4()),
         'datatime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
         'uxtime': time.time()
     }
@@ -30,9 +30,9 @@ def get_dataFrom_dataID(dataID):
     data = client.get_item_query({'dataID': dataID})
     return data
 
-def get_dataFrom_id_data(id_data):
+def get_dataFrom_idData(idData):
 
-    data = client.get_item_query({'id_data': id_data})
+    data = client.get_item_query({'idData': idData})
     return data
 
 

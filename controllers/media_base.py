@@ -125,7 +125,7 @@ class media_base():
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
 
-        return {'status': 'OK', 'id_data': data_ex['id_data']}
+        return {'status': 'OK', 'idData': data_ex['idData']}
 
     async def post_video_(self, file, **kwargs):
         
@@ -147,19 +147,19 @@ class media_base():
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
 
-        return {'status': 'OK', 'id_data': data_ex['id_data']}
+        return {'status': 'OK', 'idData': data_ex['idData']}
 
 
-    def get_image_(self, id_data, **kwargs):
+    def get_image_(self, idData, **kwargs):
         
 
         logger.info("get_image_")
-        logger.info(f"id_data: {id_data}")
-        if id_data is None:
+        logger.info(f"idData: {idData}")
+        if idData is None:
             raise HTTPException(status_code=400, detail="Value Error") 
 
         test = kwargs['test']
-        data = myclient.get_dataFrom_id_data(id_data)
+        data = myclient.get_dataFrom_idData(idData)
         if 'fname' in data.keys():
             path_export = path_data + data['fname']
         else:
@@ -173,13 +173,13 @@ class media_base():
             raise HTTPException(status_code=500, detail='Error')
             
             
-    def get_video_(self, id_data=None, **kwargs):
+    def get_video_(self, idData=None, **kwargs):
         
         logger.debug("get_video_")
         test = kwargs['test']
-        print(id_data)
+        print(idData)
         
-        data = myclient.get_dataFrom_id_data(id_data)
+        data = myclient.get_dataFrom_idData(idData)
         if 'fname' in data.keys():
             path_export = path_data + data['fname']
         else:
