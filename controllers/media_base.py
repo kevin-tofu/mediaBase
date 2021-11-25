@@ -44,7 +44,8 @@ class media_prod(media_base):
         fname_json = fname + '-image.json'
         
         try:
-            result = self.get_info_image(f"{path_data}{fname}", **kwargs)
+            # result = self.get_info_image(f"{path_data}{fname}", **kwargs)
+            result = self.get_info_image(image, **kwargs)
             # logger.debug(result)
             # with open(path_data + fname_json, 'w') as outfile:
             #     json.dump(result, outfile)
