@@ -45,7 +45,8 @@ class media_all(media_base.media_prod):
         logger.info(fname)
         
         try:
-            self.draw_info2image(image, path_data+fname_ex, **kwargs) 
+            self.draw_info2image(f"{path_data}{fname}", f"{path_data}{fname_ex}", **kwargs) 
+            # self.draw_info2image(image, path_data+fname_ex, **kwargs) 
             data_org = myclient.record(path_data, fname, test)
             data_ex = myclient.record(path_data, fname_ex, test)
                 
