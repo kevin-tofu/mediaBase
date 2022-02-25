@@ -131,3 +131,27 @@ class media_all(media_base.media_prod):
         else:
             raise HTTPException(status_code=500, detail='Error')
 
+    async def post_video_info(self, file, **kwargs):
+        
+        logger.info("post_video_")
+        test = kwargs['test']
+        myclient.flush(test)
+        logger.info(f'{file.filename}, {file.content_type}')
+        error_handling_video(file)
+        
+        try:
+            fname = file.filename
+            fname_ex = get_fname_video_key(fname)
+            await save_video(path_data, fname, file, test)
+
+            result = self.getInfo_from_video(path_data+fname, path_data+fname_ex, **kwargs)
+            # data_org = myclient.record(path_data, fname, test)
+            # data_ex = myclient.record(path_data, fname_ex, test)
+                
+        except:
+            raise HTTPException(status_code=503, detail="Internal Error") 
+        
+        finally: 
+            pass
+
+        return result
