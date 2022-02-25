@@ -43,8 +43,10 @@ class media_prod(media_base):
         image = await read_save_image(path_data, fname, file, test)
         fname_json = fname + '-image.json'
         
+        # result = self.get_info_image(f"{path_data}{fname}", **kwargs)
+
         try:
-            result = self.get_info_image(f"{path_data}{fname}", **kwargs)
+            result = self.get_info_image(f"{path_data}{fname}", **kwargs)    
             # result = self.get_info_image(image, **kwargs)
             # logger.debug(result)
             # with open(path_data + fname_json, 'w') as outfile:

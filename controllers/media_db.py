@@ -44,8 +44,9 @@ class media_all(media_base.media_prod):
         image = await read_save_image(path_data, fname, file, test)
         logger.info(fname)
         
+        self.draw_info2image(f"{path_data}{fname}", f"{path_data}{fname_ex}", **kwargs) 
         try:
-            self.draw_info2image(f"{path_data}{fname}", f"{path_data}{fname_ex}", **kwargs) 
+            
             # self.draw_info2image(image, path_data+fname_ex, **kwargs) 
             data_org = myclient.record(path_data, fname, test)
             data_ex = myclient.record(path_data, fname_ex, test)
@@ -96,11 +97,15 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=400, detail="Value Error") 
 
         test = kwargs['test']
-        data = myclient.get_dataFrom_idData(idData)
-        if 'fname' in data.keys():
-            path_export = path_data + data['fname']
+        if test == 1:
+            path_export = path_data + "_test_image_prod.jpg"
+
         else:
-            raise HTTPException(status_code=400, detail='Error')
+            data = myclient.get_dataFrom_idData(idData)
+            if 'fname' in data.keys():
+                path_export = path_data + data['fname']
+            else:
+                raise HTTPException(status_code=400, detail='Error')
 
         logger.info(f'export: {path_export}')
 
