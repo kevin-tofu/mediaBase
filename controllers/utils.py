@@ -1,3 +1,4 @@
+import os
 from logconf import mylogger
 logger = mylogger(__name__)
 print('__name__', __name__)
@@ -5,6 +6,8 @@ from fastapi import HTTPException
 import numpy as np
 from PIL import Image
 from io import BytesIO
+import uuid
+
 # sys.path.append('./mediaBase/')
 
 
@@ -18,16 +21,35 @@ def error_handling_video_ext(ext_v):
     if not extention_video:
         raise HTTPException(status_code=400, detail="The file is NOT 'mp4', 'MP4'")
 
+def get_fname_uuid(fname):
+
+    myuuid = str(uuid.uuid4())
+    fname_ext = os.path.splitext(fname)[-1]
+
+    # print('fname', fname)
+    # print('myuuid', myuuid)
+    # print('fname_ext', fname_ext)
+
+    fname_uuid = f"{myuuid}{fname_ext}"
+    # print(fname_uuid)
+
+    return fname_uuid, myuuid
+
+
+def get_fname_prod(fname):
+
+    fname_ext = os.path.splitext(fname)[-1]
+    fname_base = os.path.splitext(os.path.basename(fname))[0]
+    fname_prod = f"{fname_base}-prod{fname_ext}"
+
+    return fname_prod
+
+
 def error_handling_image(file):
     error_handling_image_ext(file.filename.split('.')[-1])
 
 def error_handling_video(file):
     error_handling_video_ext(file.filename.split('.')[-1])
-
-def get_fname_image_key(fname):
-    return fname.split('.')[0] + '_prod.jpg'
-def get_fname_video_key(fname):
-    return fname.split('.')[0] + '_prod.mp4'
 
 async def read_image(file) -> Image.Image:
 

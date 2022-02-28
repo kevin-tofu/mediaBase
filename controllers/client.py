@@ -1,59 +1,94 @@
 
 import os
-import config
 import time
 import datetime
 import uuid
-from logconf import mylogger
-logger = mylogger(__name__)
-print('__name__', __name__)
-from database import client
+from zoneinfo import reset_tzpath
+# from logconf import mylogger
+# logger = mylogger(__name__)
+# print('__name__', __name__)
 
-def record(path, fname, test = None):
+from mediaBase.database import mongo_client
 
-    data = {
-        'path': path,
-        'fname': fname,
-        'idData': str(uuid.uuid4()),
-        'datatime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
-        'uxtime': time.time()
-    }
 
-    if test is not None:
+class mongo_client_media(mongo_client):
+    
+    def __init__(self, _config):
+        
+        # super().__init__()
+        # self.myclient = mongo_client(_config)
+        
+        super().__init__(_config)
+        self.DELETE_INTERVAL = _config.DELETE_INTERVAL
+
+        # if True:
+        if False:
+            data = self.record("test", "test", "test", 'uuid', 0)
+            _id = data['_id']
+            result = self.delete_item(_id)
+            print(_id, result)
+
+
+
+    def record(self, path, fname_org, fname, _uuid, test = None):
+
+        # uuid = str(uuid.uuid4())
+        data = {
+            'path': path,
+            'fname': fname,
+            'fname_org': fname_org,
+            'idData': _uuid,
+            'datatime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
+            'uxtime': time.time()
+        }
+
+        # print('data:', data)
+        # print('test:', test)
+        
+        # if test is not None or test == 0:
+        if type(test) is int:
+            if test != 0:
+                return data
+        elif type(test) is None:
+            return data
+        else:
+            return None
+
+        _id = self.insert_item(data)
+        # print(_id, data)
+
         return data
 
-    client.insert_item(data)
-    return data
 
-def get_dataFrom_dataID(dataID):
+    def get_dataFrom_dataID(self, dataID):
 
-    data = client.get_item_query({'dataID': dataID})
-    return data
+        data = self.get_item_query({'dataID': dataID})
+        return data
 
-def get_dataFrom_idData(idData):
+    def get_dataFrom_idData(self, idData):
 
-    data = client.get_item_query({'idData': idData})
-    return data
+        data = self.get_item_query({'idData': idData})
+        return data
 
 
-def flush(test):
+    def flush(self, test):
 
-    if test is not None:
-        return
-    uxtime = time.time()
-    datalist = client.get_all_items()
+        if test is not None:
+            return
+        uxtime = time.time()
+        datalist = self.get_all_items()
 
-    for data_loop in datalist:
+        for data_loop in datalist:
 
-        if 'uxtime' in data_loop.keys():
-            
-            time_diff = uxtime - data_loop['uxtime']
+            if 'uxtime' in data_loop.keys():
+                
+                time_diff = uxtime - data_loop['uxtime']
 
-            if config.DELETE_INTERVAL > 0:
-                if time_diff > config.DELETE_INTERVAL:
-                    
-                    if 'path' in data_loop.keys() and 'fname' in data_loop.keys():
-                        fpath = data_loop['path'] + data_loop['fname']
-                        if os.path.exists(fpath) == True:
-                            os.remove(fpath)
-                    client.delete_item(data_loop['_id'])
+                if self.DELETE_INTERVAL > 0:
+                    if time_diff > self.DELETE_INTERVAL:
+                        
+                        if 'path' in data_loop.keys() and 'fname' in data_loop.keys():
+                            fpath = data_loop['path'] + data_loop['fname']
+                            if os.path.exists(fpath) == True:
+                                os.remove(fpath)
+                        self.delete_item(data_loop['_id'])
