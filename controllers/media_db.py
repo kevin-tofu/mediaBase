@@ -41,6 +41,9 @@ class media_all(media_base.media_prod):
         if os.path.exists(self.path_data) == False:
             os.makedirs(self.path_data)
 
+        if True:
+        # if False:
+            pass
 
     def draw_info2image(self, image, fpath_ex, **kwargs):
         raise NotImplementedError()
@@ -70,9 +73,13 @@ class media_all(media_base.media_prod):
 
             # logger.info(f'{fname}, {fname_ex_org}')
             self.draw_info2image(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
+
             data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
-                
+            # print(data_ex)
+
+        # try:
+            # pass    
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
         
@@ -93,34 +100,34 @@ class media_all(media_base.media_prod):
         error_handling_video(file)
     
 
-        # try:
-        fname_org = file.filename
-        fname, uuid_f = get_fname_uuid(fname_org)
-
-        # print(kwargs)
-        if "ext" in kwargs:
-            fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
-        else:
-            fname_ex_org = get_fname_prod(fname)
-        # print(fname)
-        # print(fname_ex_org)
-        
-        _, uuid_ex = get_fname_uuid(fname_ex_org)
-        await save_video(self.path_data, fname, file, test)
-
-        # logger.info(f'{fname}, {fname_ex_org}')
-        self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
-
-        
-        # logger.info(f"record: {fname}")
-        data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
-
-        # logger.info(f"record: {fname_ex_org}")
-        data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
-            
-
         try:
-            pass
+            fname_org = file.filename
+            fname, uuid_f = get_fname_uuid(fname_org)
+
+            # print(kwargs)
+            if "ext" in kwargs:
+                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+            else:
+                fname_ex_org = get_fname_prod(fname)
+            # print(fname)
+            # print(fname_ex_org)
+            
+            _, uuid_ex = get_fname_uuid(fname_ex_org)
+            await save_video(self.path_data, fname, file, test)
+
+            # logger.info(f'{fname}, {fname_ex_org}')
+            self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
+
+            
+            # logger.info(f"record: {fname}")
+            data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
+
+            # logger.info(f"record: {fname_ex_org}")
+            data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
+                
+
+        # try:
+            # pass
 
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
@@ -143,7 +150,6 @@ class media_all(media_base.media_prod):
             path_export = self.path_data + "_test_image_prod.jpg"
 
         else:
-
             data = self.myclient.get_dataFrom_idData(idData)
             if data is None:
                 raise HTTPException(status_code=500, detail='The data is not found')

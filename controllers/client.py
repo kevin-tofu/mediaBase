@@ -21,8 +21,8 @@ class mongo_client_media(mongo_client):
         super().__init__(_config)
         self.DELETE_INTERVAL = _config.DELETE_INTERVAL
 
-        # if True:
-        if False:
+        if True:
+        # if False:
             data = self.record("test", "test", "test", 'uuid', 0)
             _id = data['_id']
             result = self.delete_item(_id)
@@ -46,13 +46,12 @@ class mongo_client_media(mongo_client):
         # print('test:', test)
         
         # if test is not None or test == 0:
+        # when it is testing, just return data without recording.
         if type(test) is int:
             if test != 0:
                 return data
-        elif type(test) is None:
+        elif test is not None:
             return data
-        else:
-            return None
 
         _id = self.insert_item(data)
         # print(_id, data)
