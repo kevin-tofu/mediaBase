@@ -59,7 +59,12 @@ class media_all(media_base.media_prod):
         try:
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
-            fname_ex_org = get_fname_prod(fname)
+            # fname_ex_org = get_fname_prod(fname)
+            if "ext" in kwargs:
+                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+            else:
+                fname_ex_org = get_fname_prod(fname)
+            
             _, uuid_ex = get_fname_uuid(fname_ex_org)
             image = await read_save_image(self.path_data, fname, file, test)
 
@@ -88,25 +93,33 @@ class media_all(media_base.media_prod):
         error_handling_video(file)
     
 
-        try:
-            fname_org = file.filename
-            fname, uuid_f = get_fname_uuid(fname_org)
-            fname_ex_org = get_fname_prod(fname)
-            _, uuid_ex = get_fname_uuid(fname_ex_org)
-            await save_video(self.path_data, fname, file, test)
-
-            # logger.info(f'{fname}, {fname_ex_org}')
-            self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
-
-            
-            # logger.info(f"record: {fname}")
-            data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
-
-            # logger.info(f"record: {fname_ex_org}")
-            data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
-            
-
         # try:
+        fname_org = file.filename
+        fname, uuid_f = get_fname_uuid(fname_org)
+
+        # print(kwargs)
+        if "ext" in kwargs:
+            fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+        else:
+            fname_ex_org = get_fname_prod(fname)
+        # print(fname)
+        # print(fname_ex_org)
+        
+        _, uuid_ex = get_fname_uuid(fname_ex_org)
+        await save_video(self.path_data, fname, file, test)
+
+        # logger.info(f'{fname}, {fname_ex_org}')
+        self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
+
+        
+        # logger.info(f"record: {fname}")
+        data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
+
+        # logger.info(f"record: {fname_ex_org}")
+        data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
+            
+
+        try:
             pass
 
         except:
@@ -121,7 +134,7 @@ class media_all(media_base.media_prod):
     def get_image_(self, idData, **kwargs):
         
         logger.info("get_image_")
-        # logger.info(f"idData: {idData}")
+        logger.info(f"idData: {idData}")
         if idData is None:
             raise HTTPException(status_code=400, detail="Value Error") 
 
@@ -129,14 +142,18 @@ class media_all(media_base.media_prod):
         if test == 1:
             path_export = self.path_data + "_test_image_prod.jpg"
 
-        data = self.myclient.get_dataFrom_idData(idData)
-        if 'fname' in data.keys():
-            path_export = self.path_data + data['fname']
         else:
-            raise HTTPException(status_code=400, detail='Error')
+
+            data = self.myclient.get_dataFrom_idData(idData)
+            if data is None:
+                raise HTTPException(status_code=500, detail='The data is not found')
+
+            if 'fname' in data.keys():
+                path_export = self.path_data + data['fname']
+            else:
+                raise HTTPException(status_code=400, detail='Error')
 
         # logger.info(f'export: {path_export}')
-
         if os.path.exists(path_export) == True:
             return FileResponse(path_export)
         else:
@@ -146,28 +163,31 @@ class media_all(media_base.media_prod):
     def get_video_(self, idData=None, **kwargs):
         
         logger.info("get_video_")
+        logger.info(idData)
+        if idData is None:
+            raise HTTPException(status_code=400, detail="Value Error") 
+        
         test = kwargs['test']
-        print(idData)
-        
-        data = self.myclient.get_dataFrom_idData(idData)
-        # print('data', data)
-        if data is None:
-            raise HTTPException(status_code=500, detail='The data is not found')
-        
-        if 'fname' in data.keys():
-            path_export = self.path_data + data['fname']
+        if test == 1:
+            path_export = self.path_data + "_test_image_prod.jpg"
         else:
-            raise HTTPException(status_code=400, detail='Error')
+            data = self.myclient.get_dataFrom_idData(idData)
+            if data is None:
+                raise HTTPException(status_code=500, detail='The data is not found')
+            
+            if 'fname' in data.keys():
+                path_export = self.path_data + data['fname']
+            else:
+                raise HTTPException(status_code=400, detail='Error')
         
         # logger.info(f'export: {path_export}')
-        
         if os.path.exists(path_export) == True:
             return FileResponse(path_export, filename=path_export)
             # return FileResponse(path_export)
             # return {'status': 'ok'}
         else:
             raise HTTPException(status_code=500, detail='Error')
-
+        
 
 if __name__ == '__main__':
     

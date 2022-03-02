@@ -36,9 +36,15 @@ def get_fname_uuid(fname):
     return fname_uuid, myuuid
 
 
-def get_fname_prod(fname):
+def get_fname_prod(fname, ext=None):
 
-    fname_ext = os.path.splitext(fname)[-1]
+    if ext is None:
+        fname_ext = os.path.splitext(fname)[-1]
+    elif type(ext) is str:
+        fname_ext = ext
+    else:
+        fname_ext = ""
+
     fname_base = os.path.splitext(os.path.basename(fname))[0]
     fname_prod = f"{fname_base}-prod{fname_ext}"
 
