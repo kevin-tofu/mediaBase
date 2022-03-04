@@ -44,13 +44,69 @@ class media_all(media_base.media_prod):
         if True:
         # if False:
             pass
+    
+    def draw_info2image_2images(self, fpath_org1, fpath_org2, fpath_ex, **kwargs):
+        raise NotImplementedError()
 
-    def draw_info2image(self, image, fpath_ex, **kwargs):
+    def draw_info2image(self, fpath_org, fpath_ex, **kwargs):
         raise NotImplementedError()
     
     def draw_info2video(self, fpath_org, fpath_ex, **kwargs):
         raise NotImplementedError()
+    
+    async def post_2images_(self, file1, file2, **kwargs):
         
+        logger.info("post_2images_")
+        test = kwargs['test']
+
+        self.myclient.flush(test)
+        error_handling_image(file1)
+        error_handling_image(file2)
+        
+        try:
+            fname_org1 = file1.filename
+            fname1, uuid_f1 = get_fname_uuid(fname_org1)
+            fname_org2 = file2.filename
+            fname2, uuid_f2 = get_fname_uuid(fname_org2)
+
+            # fname_ex_org = get_fname_prod(fname)
+            if "ext" in kwargs:
+                # fname_ex_org1 = get_fname_prod(fname1, ext=kwargs['ext'])
+                # fname_ex_org2 = get_fname_prod(fname2, ext=kwargs['ext'])
+                fname_export, uuid_export = get_fname_uuid(fname1, ext=kwargs['ext'])
+            else:
+                fname_export, uuid_export = get_fname_uuid(fname1)
+            
+            # _, uuid_ex1 = get_fname_uuid(fname_ex_org1)
+            # _, uuid_ex2 = get_fname_uuid(fname_ex_org2)
+            await save_image(self.path_data, fname1, file1, test)
+            await save_image(self.path_data, fname2, file2, test)
+
+            # logger.info(f'{fname}, {fname_ex_org}')
+            self.draw_info2image_2images(self.path_data+fname1, \
+                                         self.path_data+fname2, \
+                                         self.path_data+fname_export, \
+                                         **kwargs)
+
+            data_org1 = self.myclient.record(self.path_data, fname_org1, fname1, uuid_f1, test)
+            data_org2 = self.myclient.record(self.path_data, fname_org2, fname2, uuid_f2, test)
+            data_ex = self.myclient.record(self.path_data, fname_export, fname_export, uuid_export, test)
+            # print(data_ex)
+
+        # try:
+            # pass    
+        except:
+            raise HTTPException(status_code=503, detail="Internal Error") 
+        
+        finally:
+            # if os.path.exists(f"{self.path_data}{fname}"):
+            #     os.remove(f"{self.path_data}{fname}")
+            #     logger.info(f"Deleted: {self.path_data}{fname}")
+            pass
+
+        return {'status': 'OK', 'idData': data_ex['idData']}
+
+
     async def post_image_(self, file, **kwargs):
         
         logger.info("post_image_")
@@ -69,7 +125,9 @@ class media_all(media_base.media_prod):
                 fname_ex_org = get_fname_prod(fname)
             
             _, uuid_ex = get_fname_uuid(fname_ex_org)
-            image = await read_save_image(self.path_data, fname, file, test)
+            await save_image(self.path_data, fname, file, test)
+            # image = await read_save_image(self.path_data, fname, file, test)
+            
 
             # logger.info(f'{fname}, {fname_ex_org}')
             self.draw_info2image(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
