@@ -12,9 +12,9 @@ import uuid
 
 
 def error_handling_image_ext(ext_i):
-    extention_image = ext_i in  ('jpg', 'jpeg', 'JPEG', 'png', 'PNG')
+    extention_image = ext_i in  ('jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'JPG')
     if not extention_image:
-        raise HTTPException(status_code=400, detail="The file is NOT .jpg or .jpeg")
+        raise HTTPException(status_code=400, detail="The file is NOT 'jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'JPG'")
 
 def error_handling_video_ext(ext_v):
     extention_video = ext_v in ('mp4', 'MP4')

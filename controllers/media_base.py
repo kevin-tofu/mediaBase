@@ -40,8 +40,8 @@ class media_prod(media_base):
         logger.info(f'{file1.filename}, {file1.content_type}')
         test = kwargs['test']
         
-        try:
-
+        # try:
+        if True:
             error_handling_image(file1)
             error_handling_image(file2)
 
@@ -55,7 +55,7 @@ class media_prod(media_base):
             
             result = self.get_info_2images(f"{path_data}{fname1}", f"{path_data}{fname2}", **kwargs)
             
-
+        try:
             pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
