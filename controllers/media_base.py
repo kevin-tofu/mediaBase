@@ -40,8 +40,8 @@ class media_prod(media_base):
         logger.info(f'{file1.filename}, {file1.content_type}')
         test = kwargs['test']
         
-        # try:
-        if True:
+        try:
+        # if True:
             error_handling_image(file1)
             error_handling_image(file2)
 
@@ -55,17 +55,17 @@ class media_prod(media_base):
             
             result = self.get_info_2images(f"{path_data}{fname1}", f"{path_data}{fname2}", **kwargs)
             
-        try:
-            pass
+        # try:
+            # pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
             if os.path.exists(f"{path_data}{fname1}"):
                 os.remove(f"{path_data}{fname1}")
-            #     logger.info(f"Deleted: {path_data}{fname1}")
+                logger.info(f"Deleted: {path_data}{fname1}")
             if os.path.exists(f"{path_data}{fname2}"):
                 os.remove(f"{path_data}{fname2}")
-            #     logger.info(f"Deleted: {path_data}{fname2}")
+                logger.info(f"Deleted: {path_data}{fname2}")
             pass
         
         return result
@@ -111,21 +111,22 @@ class media_prod(media_base):
         logger.info(f'{file.filename}, {file.content_type}')
         test = kwargs['test']
         
-        # try:
-        error_handling_video(file)
+        try:
+            error_handling_video(file)
 
-        fname, uuid_f = utils.get_fname_uuid(file.filename)
-        await save_video(path_data, fname, file, test)
-        fname_json = os.path.basename(fname) + '-video.json'
+            fname, uuid_f = utils.get_fname_uuid(file.filename)
+            await save_video(path_data, fname, file, test)
+            fname_json = os.path.basename(fname) + '-video.json'
 
-        result = self.get_info_video(f"{path_data}{fname}", **kwargs)
+            result = self.get_info_video(f"{path_data}{fname}", **kwargs)
             # logger.debug(result)
             # with open(path_data + fname_json, 'w') as outfile:
             #     json.dump(result, outfile)
             #     myclient.record(path_data, fname_json, test)
             # logger.info(f'saved: {path_data + fname_json}')
-        try:    
-            pass
+
+        # try:    
+            # pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
