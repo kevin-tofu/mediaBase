@@ -4,9 +4,10 @@ import time
 import datetime
 import uuid
 # from zoneinfo import reset_tzpath
-# from logconf import mylogger
-# logger = mylogger(__name__)
-# print('__name__', __name__)
+
+from logconf import mylogger
+logger = mylogger(__name__)
+print('__name__', __name__)
 
 from mediaBase.database import mongo_client
 
@@ -72,17 +73,18 @@ class mongo_client_media(mongo_client):
 
     def flush(self, test):
 
-        if test is not None:
+        if test is None:
             return
+        
         uxtime = time.time()
         datalist = self.get_all_items()
 
         for data_loop in datalist:
 
             if 'uxtime' in data_loop.keys():
-                
                 time_diff = uxtime - data_loop['uxtime']
-
+                logger.info("flush - time_diff")
+                logger.info(time_diff)
                 if self.DELETE_INTERVAL > 0:
                     if time_diff > self.DELETE_INTERVAL:
                         
@@ -90,4 +92,5 @@ class mongo_client_media(mongo_client):
                             fpath = data_loop['path'] + data_loop['fname']
                             if os.path.exists(fpath) == True:
                                 os.remove(fpath)
+                                logger.info(f"removed - {fpath}")
                         self.delete_item(data_loop['_id'])

@@ -37,7 +37,9 @@ class media_prod(media_base):
     async def post_info_2images_(self, file1, file2, **kwargs):
 
         logger.debug("post_coco_image_")
+        # print(kwargs)
         logger.info(f'{file1.filename}, {file1.content_type}')
+        logger.info(f'{file2.filename}, {file1.content_type}')
         test = kwargs['test']
         
         try:

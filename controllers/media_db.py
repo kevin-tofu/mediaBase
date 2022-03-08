@@ -144,9 +144,9 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally:
-            # if os.path.exists(f"{self.path_data}{fname}"):
-            #     os.remove(f"{self.path_data}{fname}")
-            #     logger.info(f"Deleted: {self.path_data}{fname}")
+            if test == 1:
+                if os.path.exists("{self.path_data}{fname}") == True:
+                    os.remove(f"{self.path_data}{fname}")
             pass
 
         return {'status': 'OK', 'idData': data_ex['idData']}
@@ -195,7 +195,9 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally: 
-            pass
+            if test == 1:
+                if os.path.exists("{self.path_data}{fname}") == True:
+                    os.remove(f"{self.path_data}{fname}")
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
@@ -209,8 +211,7 @@ class media_all(media_base.media_prod):
 
         test = kwargs['test']
         if test == 1:
-            path_export = self.path_data + "_test_image_prod.jpg"
-
+            path_export = f"{self.path_data}/test_image.jpg"
         else:
             data = self.myclient.get_dataFrom_idData(idData)
             if data is None:
@@ -237,7 +238,7 @@ class media_all(media_base.media_prod):
         
         test = kwargs['test']
         if test == 1:
-            path_export = self.path_data + "_test_image_prod.jpg"
+            path_export = f"{self.path_data}/test_video.mp4"
         else:
             data = self.myclient.get_dataFrom_idData(idData)
             if data is None:
