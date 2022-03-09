@@ -41,12 +41,14 @@ class media_prod(media_base):
         logger.info(f'{file1.filename}, {file1.content_type}')
         logger.info(f'{file2.filename}, {file1.content_type}')
         test = kwargs['test']
-        
+        fname2 = None
+        fname1 = None
+
+        error_handling_image(file1)
+        error_handling_image(file2)
+
         try:
         # if True:
-            error_handling_image(file1)
-            error_handling_image(file2)
-
             fname1, uuid_f = utils.get_fname_uuid(file1.filename)
             image1 = await read_save_image(path_data, fname1, file1, test)
             fname2, uuid_f = utils.get_fname_uuid(file2.filename)
@@ -62,10 +64,10 @@ class media_prod(media_base):
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
-            if os.path.exists(f"{path_data}{fname1}"):
+            if os.path.exists(f"{path_data}{fname1}") and fname1 is not None:
                 os.remove(f"{path_data}{fname1}")
                 logger.info(f"Deleted: {path_data}{fname1}")
-            if os.path.exists(f"{path_data}{fname2}"):
+            if os.path.exists(f"{path_data}{fname2}") and fname1 is not None:
                 os.remove(f"{path_data}{fname2}")
                 logger.info(f"Deleted: {path_data}{fname2}")
             pass
@@ -78,10 +80,11 @@ class media_prod(media_base):
         logger.debug("post_coco_image_")
         logger.info(f'{file.filename}, {file.content_type}')
         test = kwargs['test']
-        
-        try:
+        fname = None
 
-            error_handling_image(file)
+        error_handling_image(file)
+
+        try:
 
             fname, uuid_f = utils.get_fname_uuid(file.filename)
             image = await read_save_image(path_data, fname, file, test)
@@ -100,7 +103,7 @@ class media_prod(media_base):
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
-            if os.path.exists(f"{path_data}{fname}"):
+            if os.path.exists(f"{path_data}{fname}") and fname is not None:
                 os.remove(f"{path_data}{fname}")
                 logger.info(f"Deleted: {path_data}{fname}")
         
@@ -112,10 +115,11 @@ class media_prod(media_base):
         logger.debug("post_info_video_")
         logger.info(f'{file.filename}, {file.content_type}')
         test = kwargs['test']
-        
-        try:
-            error_handling_video(file)
+        fname = None
+        error_handling_video(file)
 
+        try:
+            
             fname, uuid_f = utils.get_fname_uuid(file.filename)
             await save_video(path_data, fname, file, test)
             fname_json = os.path.basename(fname) + '-video.json'
@@ -132,7 +136,7 @@ class media_prod(media_base):
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
-            if os.path.exists(f"{path_data}{fname}"):
+            if os.path.exists(f"{path_data}{fname}") and fname is not None:
                 os.remove(f"{path_data}{fname}")
                 logger.info(f"Deleted: {path_data}{fname}")
         
