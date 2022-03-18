@@ -20,7 +20,7 @@ class mongo_client_media(mongo_client):
         # self.myclient = mongo_client(_config)
         
         super().__init__(_config)
-        self.DELETE_INTERVAL = _config.DELETE_INTERVAL
+        self.DELETE_INTERVAL = float(_config.DELETE_INTERVAL)
 
         # if True:
         if False:
@@ -73,7 +73,7 @@ class mongo_client_media(mongo_client):
 
     def flush(self, test):
 
-        if test is None:
+        if test is not None:
             return
         
         uxtime = time.time()
@@ -81,10 +81,11 @@ class mongo_client_media(mongo_client):
 
         for data_loop in datalist:
 
+            # logger.info(data_loop)
             if 'uxtime' in data_loop.keys():
                 time_diff = uxtime - data_loop['uxtime']
-                logger.info("flush - time_diff")
-                logger.info(time_diff)
+                # logger.info("flush - time_diff")
+                # logger.info(time_diff)
                 if self.DELETE_INTERVAL > 0:
                     if time_diff > self.DELETE_INTERVAL:
                         

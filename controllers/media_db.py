@@ -181,10 +181,10 @@ class media_all(media_base.media_prod):
             self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
 
             
-            # logger.info(f"record: {fname}")
+            logger.info(f"record: {fname}")
             data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
 
-            # logger.info(f"record: {fname_ex_org}")
+            logger.info(f"record: {fname_ex_org}")
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
                 
 
@@ -249,9 +249,12 @@ class media_all(media_base.media_prod):
             else:
                 raise HTTPException(status_code=400, detail='Error')
         
-        # logger.info(f'export: {path_export}')
+        # path_export = "./temp/test_video.mp4"
+        logger.info(f'export: {path_export}')
+        # logger.info(os.path.exists(path_export))
         if os.path.exists(path_export) == True:
             return FileResponse(path_export, filename=path_export)
+            # return FileResponse(path_export)
             # return FileResponse(path_export)
             # return {'status': 'ok'}
         else:
