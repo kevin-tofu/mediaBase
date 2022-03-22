@@ -161,8 +161,8 @@ class media_all(media_base.media_prod):
         error_handling_video(file)
     
 
-        try:
-        # if True:
+        # try:
+        if True:
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
 
@@ -188,8 +188,8 @@ class media_all(media_base.media_prod):
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
                 
 
-        # try:
-            # pass
+        try:
+            pass
 
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
