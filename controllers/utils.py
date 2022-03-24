@@ -17,9 +17,15 @@ def error_handling_image_ext(ext_i):
         raise HTTPException(status_code=400, detail="The file is NOT 'jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'JPG'")
 
 def error_handling_video_ext(ext_v):
-    extention_video = ext_v in ('mp4', 'MP4')
+    extention_video = ext_v in ('mp4', 'MP4', 'AVI', 'avi', 'MOV', 'mov', 'wmv', 'WMV')
     if not extention_video:
-        raise HTTPException(status_code=400, detail="The file is NOT 'mp4', 'MP4'")
+        raise HTTPException(status_code=400, detail="The file is NOT mp4 or avi or mov or wmv")
+
+# def error_handling_video_ext(ext_v):
+#     extention_video = ext_v in ('mp4', 'MP4')
+#     if not extention_video:
+#         raise HTTPException(status_code=400, detail="The file is NOT mp4")
+
 
 def get_fname_uuid(fname):
 

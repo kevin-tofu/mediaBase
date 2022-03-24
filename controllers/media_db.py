@@ -117,6 +117,7 @@ class media_all(media_base.media_prod):
         error_handling_image(file)
         
         try:
+        # if True:
         
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
@@ -139,7 +140,7 @@ class media_all(media_base.media_prod):
             # print(data_ex)
 
         # try:
-            # pass    
+            # pass
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
         
@@ -152,6 +153,34 @@ class media_all(media_base.media_prod):
         return {'status': 'OK', 'idData': data_ex['idData']}
 
 
+    async def convert2mp4(self, fname_src, fname_dst):
+
+        import ffmpeg
+        
+        stream = ffmpeg.input(f"{self.path_data}{fname_src}", v="quiet")
+        stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
+        ffmpeg.run(stream)
+
+
+    async def converter(self, fname):
+
+        fname_noext = os.path.splitext(fname)[0]
+        fname_dst = f'{fname_noext}.mp4'
+
+        file_ext = os.path.splitext(fname)[-1]
+        if file_ext == ".mp4" or file_ext == ".MP4":
+            
+            return fname
+        else:
+            
+            await self.convert2mp4(fname, fname_dst)
+
+            if os.path.exists(f"{self.path_data}{fname}") == True:
+                os.remove(f"{self.path_data}{fname}")
+
+            return fname_dst
+        
+
     async def post_video_(self, file, **kwargs):
         
         logger.info("post_video_")
@@ -159,24 +188,26 @@ class media_all(media_base.media_prod):
         self.myclient.flush(test)
         # logger.info(f'{file.filename}, {file.content_type}')
         error_handling_video(file)
-    
 
         # try:
         if True:
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
+            await save_video(self.path_data, fname, file, test)
+
+            fname = await self.converter(fname)
+            # logger.info(f"fname:{fname}")
 
             # print(kwargs)
             if "ext" in kwargs:
                 fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
             else:
                 fname_ex_org = get_fname_prod(fname)
-            # print(fname)
-            # print(fname_ex_org)
             
             _, uuid_ex = get_fname_uuid(fname_ex_org)
-            await save_video(self.path_data, fname, file, test)
-
+            logger.info(f"fname:{fname_ex_org}")
+            
+            
             # logger.info(f'{fname}, {fname_ex_org}')
             self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
 
