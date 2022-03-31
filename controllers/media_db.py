@@ -84,9 +84,9 @@ class media_all(media_base.media_prod):
             await save_image(self.path_data, fname2, file2, test)
 
             # logger.info(f'{fname}, {fname_ex_org}')
-            self.draw_info2image_2images(self.path_data+fname1, \
-                                         self.path_data+fname2, \
-                                         self.path_data+fname_export, \
+            self.draw_info2image_2images(f"{self.path_data}{fname1}", \
+                                         f"{self.path_data}{fname2}", \
+                                         f"{self.path_data}{fname_export}", \
                                          **kwargs)
 
             data_org1 = self.myclient.record(self.path_data, fname_org1, fname1, uuid_f1, test)
@@ -100,10 +100,16 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally:
-            # if os.path.exists(f"{self.path_data}{fname}"):
-            #     os.remove(f"{self.path_data}{fname}")
-            #     logger.info(f"Deleted: {self.path_data}{fname}")
-            pass
+            if int(test) == 1:
+                if os.path.exists(f"{self.path_data}{fname1}"):
+                    os.remove(f"{self.path_data}{fname1}")
+                    logger.info(f"Deleted: {self.path_data}{fname1}")
+                if os.path.exists(f"{self.path_data}{fname2}"):
+                    os.remove(f"{self.path_data}{fname2}")
+                    logger.info(f"Deleted: {self.path_data}{fname2}")
+                if os.path.exists(f"{self.path_data}{fname_export}"):
+                    os.remove(f"{self.path_data}{fname_export}")
+                    logger.info(f"Deleted: {self.path_data}{fname_export}")
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
@@ -129,15 +135,10 @@ class media_all(media_base.media_prod):
             
             _, uuid_ex = get_fname_uuid(fname_ex_org)
             await save_image(self.path_data, fname, file, test)
-            # image = await read_save_image(self.path_data, fname, file, test)
-            
-
-            # logger.info(f'{fname}, {fname_ex_org}')
-            self.draw_info2image(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
+            self.draw_info2image(f"{self.path_data}{fname}", self.path_data+fname_ex_org, **kwargs)
 
             data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
-            # print(data_ex)
 
         # try:
             # pass
@@ -145,10 +146,14 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally:
-            if test == 1:
+            # os.remove(f"{self.path_data}{fname}")
+            # os.remove(f"{self.path_data}{fname_ex_org}")
+            if int(test) == 1:
                 if os.path.exists("{self.path_data}{fname}") == True:
                     os.remove(f"{self.path_data}{fname}")
-            pass
+                if os.path.exists("{self.path_data}{fname_ex_org}") == True:
+                    os.remove(f"{self.path_data}{fname_ex_org}")
+            
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
@@ -189,8 +194,8 @@ class media_all(media_base.media_prod):
         # logger.info(f'{file.filename}, {file.content_type}')
         error_handling_video(file)
 
-        # try:
-        if True:
+        try:
+        # if True:
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
             await save_video(self.path_data, fname, file, test)
@@ -209,7 +214,9 @@ class media_all(media_base.media_prod):
             
             
             # logger.info(f'{fname}, {fname_ex_org}')
-            self.draw_info2video(self.path_data+fname, self.path_data+fname_ex_org, **kwargs)
+            self.draw_info2video(f"{self.path_data}{fname}", \
+                                 f"{self.path_data}{fname_ex_org}", \
+                                 **kwargs)
 
             
             logger.info(f"record: {fname}")
@@ -217,18 +224,19 @@ class media_all(media_base.media_prod):
 
             logger.info(f"record: {fname_ex_org}")
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
-                
 
-        try:
-            pass
+        # try:
+            # pass
 
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally: 
-            if test == 1:
-                if os.path.exists("{self.path_data}{fname}") == True:
+            if int(test) == 1:
+                if os.path.exists(f"{self.path_data}{fname}") == True:
                     os.remove(f"{self.path_data}{fname}")
+                if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+                    os.remove(f"{self.path_data}{fname_ex_org}")
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
@@ -276,18 +284,13 @@ class media_all(media_base.media_prod):
                 raise HTTPException(status_code=500, detail='The data is not found')
             
             if 'fname' in data.keys():
-                path_export = self.path_data + data['fname']
+                path_export = f"{self.path_data}{data['fname']}"
             else:
                 raise HTTPException(status_code=400, detail='Error')
         
-        # path_export = "./temp/test_video.mp4"
         logger.info(f'export: {path_export}')
-        # logger.info(os.path.exists(path_export))
         if os.path.exists(path_export) == True:
             return FileResponse(path_export, filename=path_export)
-            # return FileResponse(path_export)
-            # return FileResponse(path_export)
-            # return {'status': 'ok'}
         else:
             raise HTTPException(status_code=500, detail='Error')
         

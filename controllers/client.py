@@ -43,9 +43,6 @@ class mongo_client_media(mongo_client):
             'uxtime': time.time()
         }
 
-        # print('data:', data)
-        # print('test:', test)
-        
         # if test is not None or test == 0:
         # when it is testing, just return data without recording.
         if type(test) is int:
