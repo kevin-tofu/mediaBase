@@ -100,16 +100,20 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally:
-            if int(test) == 1:
-                if os.path.exists(f"{self.path_data}{fname1}"):
-                    os.remove(f"{self.path_data}{fname1}")
-                    logger.info(f"Deleted: {self.path_data}{fname1}")
-                if os.path.exists(f"{self.path_data}{fname2}"):
-                    os.remove(f"{self.path_data}{fname2}")
-                    logger.info(f"Deleted: {self.path_data}{fname2}")
-                if os.path.exists(f"{self.path_data}{fname_export}"):
-                    os.remove(f"{self.path_data}{fname_export}")
-                    logger.info(f"Deleted: {self.path_data}{fname_export}")
+
+            if test is None:
+                pass
+            elif type(test) is int:
+                if int(test) == 1:
+                    if os.path.exists(f"{self.path_data}{fname1}"):
+                        os.remove(f"{self.path_data}{fname1}")
+                        logger.info(f"Deleted: {self.path_data}{fname1}")
+                    if os.path.exists(f"{self.path_data}{fname2}"):
+                        os.remove(f"{self.path_data}{fname2}")
+                        logger.info(f"Deleted: {self.path_data}{fname2}")
+                    if os.path.exists(f"{self.path_data}{fname_export}"):
+                        os.remove(f"{self.path_data}{fname_export}")
+                        logger.info(f"Deleted: {self.path_data}{fname_export}")
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
@@ -148,12 +152,17 @@ class media_all(media_base.media_prod):
         finally:
             # os.remove(f"{self.path_data}{fname}")
             # os.remove(f"{self.path_data}{fname_ex_org}")
-            if int(test) == 1:
-                if os.path.exists("{self.path_data}{fname}") == True:
-                    os.remove(f"{self.path_data}{fname}")
-                if os.path.exists("{self.path_data}{fname_ex_org}") == True:
-                    os.remove(f"{self.path_data}{fname_ex_org}")
+            if test is None:
+                pass
             
+            elif type(test) is int:
+                if int(test) == 1:
+                    if os.path.exists("{self.path_data}{fname}") == True:
+                        os.remove(f"{self.path_data}{fname}")
+                    if os.path.exists("{self.path_data}{fname_ex_org}") == True:
+                        os.remove(f"{self.path_data}{fname_ex_org}")
+            else:
+                raise ValueError("")                
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
@@ -232,11 +241,17 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally: 
-            if int(test) == 1:
-                if os.path.exists(f"{self.path_data}{fname}") == True:
-                    os.remove(f"{self.path_data}{fname}")
-                if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
-                    os.remove(f"{self.path_data}{fname_ex_org}")
+            if test is None:
+                pass
+            
+            elif type(test) is int:
+                if int(test) == 1:
+                    if os.path.exists(f"{self.path_data}{fname}") == True:
+                        os.remove(f"{self.path_data}{fname}")
+                    if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+                        os.remove(f"{self.path_data}{fname_ex_org}")
+            else:
+                raise ValueError("")
 
         return {'status': 'OK', 'idData': data_ex['idData']}
 
