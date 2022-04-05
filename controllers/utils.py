@@ -21,6 +21,11 @@ def error_handling_video_ext(ext_v):
     if not extention_video:
         raise HTTPException(status_code=400, detail="The file is NOT mp4 or avi or mov or wmv")
 
+def error_handling_json_ext(ext_i):
+    extention_image = ext_i in  ('json')
+    if not extention_image:
+        raise HTTPException(status_code=400, detail="The file is NOT 'json'")
+
 # def error_handling_video_ext(ext_v):
 #     extention_video = ext_v in ('mp4', 'MP4')
 #     if not extention_video:
@@ -63,6 +68,10 @@ def error_handling_image(file):
 def error_handling_video(file):
     error_handling_video_ext(file.filename.split('.')[-1])
 
+
+def error_handling_json(file):
+    error_handling_json_ext(file.filename.split('.')[-1])
+
 async def read_image(file) -> Image.Image:
 
     logger.debug("read_imagefile")
@@ -96,9 +105,60 @@ async def save_video(path, fname, file, test):
 
     logger.debug("save_video")
     try:
-        with open(path + fname, 'wb') as local_temp_file:
+        with open(f"{path}/{fname}", 'wb') as local_temp_file:
             local_temp_file.write(file.file.read())
         # myclient.record(path, fname, test)
     except:
         raise HTTPException(status_code=400, detail='File Definition Error')
 
+
+async def convert2mp4(path_data, fname_src, fname_dst):
+
+    import ffmpeg
+    
+    stream = ffmpeg.input(f"{path_data}{fname_src}", v="quiet")
+    stream = ffmpeg.output(stream, f"{path_data}{fname_dst}", v="quiet")
+    ffmpeg.run(stream)
+
+async def converter_xxx2mp4(path_data, fname):
+
+    fname_noext = os.path.splitext(fname)[0]
+    fname_dst = f'{fname_noext}.mp4'
+
+    file_ext = os.path.splitext(fname)[-1]
+    if file_ext == ".mp4" or file_ext == ".MP4":
+        return fname
+    else:
+        await convert2mp4(path_data, fname, fname_dst)
+        if os.path.exists(f"{path_data}{fname}") == True:
+            os.remove(f"{path_data}{fname}")
+
+        return fname_dst
+
+def set_audio(path_src, path_dst):
+    """
+    https://kp-ft.com/684
+    https://stackoverflow.com/questions/46864915/python-add-audio-to-video-opencv
+    """
+
+    import os, shutil
+    import moviepy.editor as mp
+    import time
+
+    root_ext_pair = os.path.splitext(path_src)
+    path_dst_copy = f"{root_ext_pair[0]}-copy{root_ext_pair[1]}"
+    shutil.copyfile(path_dst, path_dst_copy)
+    time.sleep(0.5)
+
+    # Extract audio from input video.                                                                     
+    clip_input = mp.VideoFileClip(path_src)
+    # clip_input.audio.write_audiofile(path_audio)
+    # Add audio to output video.                                                                          
+    clip = mp.VideoFileClip(path_dst_copy)
+    clip.audio = clip_input.audio
+
+    time.sleep(0.5)
+    clip.write_videofile(path_dst)
+
+    time.sleep(0.5)
+    os.remove(path_dst_copy)

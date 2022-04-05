@@ -29,10 +29,36 @@ class media_base():
     def get_info_video(self, fpath_org, **kwargs):
         raise NotImplementedError()
     
+    def post_anyfiles(self, files_list, **kwargs):
+        raise NotImplementedError()
+
 
 class media_prod(media_base):
     def __init__(self, _config):
         super().__init__(_config)
+
+    async def post_files(self, files_list, **kwargs):
+
+        logger.debug("post_files")
+        test = kwargs['test']
+
+        for file in files_list:
+            logger.info(f'{file.filename}, {file.content_type}')
+        
+        try:
+        # if True:
+            logger.debug("post_anyfiles")
+            result = await self.post_anyfiles(files_list, **kwargs)
+            return result
+
+        # try:
+            # pass
+        except:
+            raise HTTPException(status_code=503, detail="Error") 
+        finally:
+            # print("finally0")
+            pass
+            
 
     async def post_info_2images_(self, file1, file2, **kwargs):
 

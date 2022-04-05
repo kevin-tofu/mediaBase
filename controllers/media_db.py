@@ -40,10 +40,6 @@ class media_all(media_base.media_prod):
         self.path_data = _config.PATH_DATA
         if os.path.exists(self.path_data) == False:
             os.makedirs(self.path_data)
-
-        if True:
-        # if False:
-            pass
     
     def draw_info2image_2images(self, fpath_org1, fpath_org2, fpath_ex, **kwargs):
         raise NotImplementedError()
@@ -54,6 +50,28 @@ class media_all(media_base.media_prod):
     def draw_info2video(self, fpath_org, fpath_ex, **kwargs):
         raise NotImplementedError()
     
+
+    async def convert2mp4(self, fname_src, fname_dst):
+
+        import ffmpeg
+        stream = ffmpeg.input(f"{self.path_data}{fname_src}", v="quiet")
+        stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
+        ffmpeg.run(stream)
+
+    async def converter(self, fname):
+
+        fname_noext = os.path.splitext(fname)[0]
+        fname_dst = f'{fname_noext}.mp4'
+        file_ext = os.path.splitext(fname)[-1]
+        if file_ext == ".mp4" or file_ext == ".MP4":
+            return fname
+        else:
+            await self.convert2mp4(fname, fname_dst)
+            if os.path.exists(f"{self.path_data}{fname}") == True:
+                os.remove(f"{self.path_data}{fname}")
+            return fname_dst
+
+            
     async def post_2images_(self, file1, file2, **kwargs):
         
         logger.info("post_2images_")
@@ -128,7 +146,6 @@ class media_all(media_base.media_prod):
         
         try:
         # if True:
-        
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
             # fname_ex_org = get_fname_prod(fname)
@@ -139,7 +156,9 @@ class media_all(media_base.media_prod):
             
             _, uuid_ex = get_fname_uuid(fname_ex_org)
             await save_image(self.path_data, fname, file, test)
-            self.draw_info2image(f"{self.path_data}{fname}", self.path_data+fname_ex_org, **kwargs)
+            self.draw_info2image(f"{self.path_data}{fname}", 
+                                 f"{self.path_data}{fname_ex_org}", 
+                                 **kwargs)
 
             data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
@@ -152,14 +171,14 @@ class media_all(media_base.media_prod):
         finally:
             # os.remove(f"{self.path_data}{fname}")
             # os.remove(f"{self.path_data}{fname_ex_org}")
+            
             if test is None:
                 pass
-            
             elif type(test) is int:
                 if int(test) == 1:
-                    if os.path.exists("{self.path_data}{fname}") == True:
+                    if os.path.exists(f"{self.path_data}{fname}") == True:
                         os.remove(f"{self.path_data}{fname}")
-                    if os.path.exists("{self.path_data}{fname_ex_org}") == True:
+                    if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
                         os.remove(f"{self.path_data}{fname_ex_org}")
             else:
                 raise ValueError("")                
@@ -167,32 +186,6 @@ class media_all(media_base.media_prod):
         return {'status': 'OK', 'idData': data_ex['idData']}
 
 
-    async def convert2mp4(self, fname_src, fname_dst):
-
-        import ffmpeg
-        
-        stream = ffmpeg.input(f"{self.path_data}{fname_src}", v="quiet")
-        stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
-        ffmpeg.run(stream)
-
-
-    async def converter(self, fname):
-
-        fname_noext = os.path.splitext(fname)[0]
-        fname_dst = f'{fname_noext}.mp4'
-
-        file_ext = os.path.splitext(fname)[-1]
-        if file_ext == ".mp4" or file_ext == ".MP4":
-            
-            return fname
-        else:
-            
-            await self.convert2mp4(fname, fname_dst)
-
-            if os.path.exists(f"{self.path_data}{fname}") == True:
-                os.remove(f"{self.path_data}{fname}")
-
-            return fname_dst
         
 
     async def post_video_(self, file, **kwargs):
@@ -264,6 +257,8 @@ class media_all(media_base.media_prod):
             raise HTTPException(status_code=400, detail="Value Error") 
 
         test = kwargs['test']
+        # logger.info("test")
+        # logger.info(test)
         if test == 1:
             path_export = f"{self.path_data}/test_image.jpg"
         else:
@@ -272,11 +267,10 @@ class media_all(media_base.media_prod):
                 raise HTTPException(status_code=500, detail='The data is not found')
 
             if 'fname' in data.keys():
-                path_export = self.path_data + data['fname']
+                path_export = f"{self.path_data}{data['fname']}"
             else:
                 raise HTTPException(status_code=400, detail='Error')
 
-        # logger.info(f'export: {path_export}')
         if os.path.exists(path_export) == True:
             return FileResponse(path_export)
         else:
