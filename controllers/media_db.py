@@ -1,4 +1,5 @@
 
+from email import utils
 import os, sys
 # import config
 import numpy as np
@@ -51,12 +52,12 @@ class media_all(media_base.media_prod):
         raise NotImplementedError()
     
 
-    async def convert2mp4(self, fname_src, fname_dst):
+    # async def convert2mp4(self, fname_src, fname_dst):
 
-        import ffmpeg
-        stream = ffmpeg.input(f"{self.path_data}{fname_src}", v="quiet")
-        stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
-        ffmpeg.run(stream)
+    #     import ffmpeg
+    #     stream = ffmpeg.input(f"{self.path_data}{fname_src}", v="quiet")
+    #     stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
+    #     ffmpeg.run(stream)
 
     async def converter(self, fname):
 
@@ -66,7 +67,9 @@ class media_all(media_base.media_prod):
         if file_ext == ".mp4" or file_ext == ".MP4":
             return fname
         else:
-            await self.convert2mp4(fname, fname_dst)
+            # await self.convert2mp4(fname, fname_dst)
+            await utils.convert2mp4(self.path_data, fname, fname_dst)
+
             if os.path.exists(f"{self.path_data}{fname}") == True:
                 os.remove(f"{self.path_data}{fname}")
             return fname_dst
@@ -228,7 +231,7 @@ class media_all(media_base.media_prod):
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
 
         # try:
-            # pass
+        #     pass
 
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 
