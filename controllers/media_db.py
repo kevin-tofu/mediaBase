@@ -59,7 +59,7 @@ class media_all(media_base.media_prod):
     #     stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
     #     ffmpeg.run(stream)
 
-    async def converter(self, fname):
+    def converter(self, fname):
 
         fname_noext = os.path.splitext(fname)[0]
         fname_dst = f'{fname_noext}.mp4'
@@ -68,7 +68,7 @@ class media_all(media_base.media_prod):
             return fname
         else:
             # await self.convert2mp4(fname, fname_dst)
-            await utils.convert2mp4(self.path_data, fname, fname_dst)
+            utils.convert2mp4(self.path_data, fname, fname_dst)
 
             if os.path.exists(f"{self.path_data}{fname}") == True:
                 os.remove(f"{self.path_data}{fname}")
@@ -191,7 +191,7 @@ class media_all(media_base.media_prod):
 
         
 
-    async def post_video_(self, file, **kwargs):
+    def post_video_(self, file, **kwargs):
         
         logger.info("post_video_")
         test = kwargs['test']
@@ -199,13 +199,13 @@ class media_all(media_base.media_prod):
         # logger.info(f'{file.filename}, {file.content_type}')
         error_handling_video(file)
 
-        # try:
-        if True:
+        try:
+        # if True:
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
-            await save_video(self.path_data, fname, file, test)
+            save_video(self.path_data, fname, file, test)
 
-            fname = await self.converter(fname)
+            fname = self.converter(fname)
             # logger.info(f"fname:{fname}")
 
             # print(kwargs)
@@ -230,8 +230,8 @@ class media_all(media_base.media_prod):
             logger.info(f"record: {fname_ex_org}")
             data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
 
-        try:
-            pass
+        # try:
+            # pass
 
         except:
             raise HTTPException(status_code=503, detail="Internal Error") 

@@ -37,7 +37,7 @@ class media_prod(media_base):
     def __init__(self, _config):
         super().__init__(_config)
 
-    async def post_files(self, files_list, **kwargs):
+    def post_files(self, files_list, **kwargs):
 
         logger.debug("post_files")
         test = kwargs['test']
@@ -48,7 +48,7 @@ class media_prod(media_base):
         try:
         # if True:
             logger.debug("post_anyfiles")
-            result = await self.post_anyfiles(files_list, **kwargs)
+            result = self.post_anyfiles(files_list, **kwargs)
             return result
 
         # try:
@@ -136,7 +136,7 @@ class media_prod(media_base):
         return result
 
 
-    async def post_info_video_(self, file, **kwargs):
+    def post_info_video_(self, file, **kwargs):
 
         logger.debug("post_info_video_")
         logger.info(f'{file.filename}, {file.content_type}')
@@ -147,7 +147,7 @@ class media_prod(media_base):
         try:
             
             fname, uuid_f = utils.get_fname_uuid(file.filename)
-            await save_video(path_data, fname, file, test)
+            save_video(path_data, fname, file, test)
             fname_json = os.path.basename(fname) + '-video.json'
 
             result = self.get_info_video(f"{path_data}{fname}", **kwargs)
