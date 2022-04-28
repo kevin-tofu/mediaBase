@@ -101,7 +101,7 @@ async def read_save_image(_path, _fname, _file, test):
     return ret
 
 
-async def save_video(path, fname, file, test):
+def save_video(path, fname, file, test):
 
     logger.debug("save_video")
     try:
@@ -112,7 +112,7 @@ async def save_video(path, fname, file, test):
         raise HTTPException(status_code=400, detail='File Definition Error')
 
 
-async def convert2mp4(path_data, fname_src, fname_dst):
+def convert2mp4(path_data, fname_src, fname_dst):
 
     import ffmpeg
     
@@ -120,7 +120,7 @@ async def convert2mp4(path_data, fname_src, fname_dst):
     stream = ffmpeg.output(stream, f"{path_data}{fname_dst}", v="quiet")
     ffmpeg.run(stream)
 
-async def converter_xxx2mp4(path_data, fname):
+def converter_xxx2mp4(path_data, fname):
 
     fname_noext = os.path.splitext(fname)[0]
     fname_dst = f'{fname_noext}.mp4'
@@ -129,7 +129,7 @@ async def converter_xxx2mp4(path_data, fname):
     if file_ext == ".mp4" or file_ext == ".MP4":
         return fname
     else:
-        await convert2mp4(path_data, fname, fname_dst)
+        convert2mp4(path_data, fname, fname_dst)
         if os.path.exists(f"{path_data}{fname}") == True:
             os.remove(f"{path_data}{fname}")
 
