@@ -99,6 +99,8 @@ class media_all(media_base.media_prod):
             else:
                 fname_export, uuid_export = get_fname_uuid(fname1)
             
+            kwargs["fname1_org"] = fname_org1
+            kwargs["fname2_org"] = fname_org2
             # _, uuid_ex1 = get_fname_uuid(fname_ex_org1)
             # _, uuid_ex2 = get_fname_uuid(fname_ex_org2)
             await save_image(self.path_data, fname1, file1, test)
@@ -159,6 +161,8 @@ class media_all(media_base.media_prod):
             
             _, uuid_ex = get_fname_uuid(fname_ex_org)
             await save_image(self.path_data, fname, file, test)
+
+            kwargs["fname_org"] = fname_org
             self.draw_info2image(f"{self.path_data}{fname}", 
                                  f"{self.path_data}{fname_ex_org}", 
                                  **kwargs)
@@ -217,7 +221,7 @@ class media_all(media_base.media_prod):
             _, uuid_ex = get_fname_uuid(fname_ex_org)
             logger.info(f"fname:{fname_ex_org}")
             
-            
+            kwargs["fname_org"] = fname_org
             # logger.info(f'{fname}, {fname_ex_org}')
             self.draw_info2video(f"{self.path_data}{fname}", \
                                  f"{self.path_data}{fname_ex_org}", \

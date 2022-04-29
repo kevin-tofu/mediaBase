@@ -83,6 +83,8 @@ class media_prod(media_base):
             
             # fname_json = os.path.basename(fname1) + '-video.json'
             
+            kwargs["fname1_org"] = file1.filename
+            kwargs["fname2_org"] = file2.filename
             result = self.get_info_2images(f"{path_data}{fname1}", f"{path_data}{fname2}", **kwargs)
             
         # try:
@@ -117,6 +119,7 @@ class media_prod(media_base):
             # image = await read_image(path_data, fname, file, test)
             # fname_json = os.path.basename(fname) + '-video.json'
             
+            kwargs["fname_org"] = file.filename
             result = self.get_info_image(f"{path_data}{fname}", **kwargs)
             # result = self.get_info_image(image, **kwargs)
             # logger.debug(result)
@@ -150,6 +153,7 @@ class media_prod(media_base):
             save_video(path_data, fname, file, test)
             fname_json = os.path.basename(fname) + '-video.json'
 
+            kwargs["fname_org"] = file.filename
             result = self.get_info_video(f"{path_data}{fname}", **kwargs)
             # logger.debug(result)
             # with open(path_data + fname_json, 'w') as outfile:
