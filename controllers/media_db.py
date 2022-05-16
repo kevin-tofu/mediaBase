@@ -112,9 +112,9 @@ class media_all(media_base.media_prod):
                                          f"{self.path_data}{fname_export}", \
                                          **kwargs)
 
-            data_org1 = self.myclient.record(self.path_data, fname_org1, fname1, uuid_f1, test)
-            data_org2 = self.myclient.record(self.path_data, fname_org2, fname2, uuid_f2, test)
-            data_ex = self.myclient.record(self.path_data, fname_export, fname_export, uuid_export, test)
+            data_org1 = self.myclient.record(self.path_data, fname_org1, fname1, uuid_f1, test=test)
+            data_org2 = self.myclient.record(self.path_data, fname_org2, fname2, uuid_f2, test=test)
+            data_ex = self.myclient.record(self.path_data, fname_export, fname_export, uuid_export, test=test)
             # print(data_ex)
 
         # try:
@@ -167,8 +167,8 @@ class media_all(media_base.media_prod):
                                  f"{self.path_data}{fname_ex_org}", 
                                  **kwargs)
 
-            data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
-            data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
+            data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test=test)
+            data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test=test)
 
         # try:
             # pass
@@ -452,6 +452,6 @@ if __name__ == '__main__':
     _, uuid_ex = get_fname_uuid(fname_ex_org)
 
     myclient = client.mongo_client_media(_config)
-    data_ex = myclient.record(myclient.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
+    data_ex = myclient.record(myclient.path_data, fname_ex_org, fname_ex_org, uuid_ex, test=test)
 
 
