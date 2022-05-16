@@ -194,7 +194,6 @@ class media_all(media_base.media_prod):
 
 
         
-
     def post_video_(self, file, **kwargs):
         
         logger.info("post_video_")
@@ -229,10 +228,18 @@ class media_all(media_base.media_prod):
 
             
             logger.info(f"record: {fname}")
-            data_org = self.myclient.record(self.path_data, fname_org, fname, uuid_f, test)
+            data_org = self.myclient.record(self.path_data, \
+                                            fname_org, \
+                                            fname, \
+                                            uuid_f, \
+                                            test=test)
 
             logger.info(f"record: {fname_ex_org}")
-            data_ex = self.myclient.record(self.path_data, fname_ex_org, fname_ex_org, uuid_ex, test)
+            data_ex = self.myclient.record(self.path_data, \
+                                           fname_ex_org, \
+                                           fname_ex_org, \
+                                           uuid_ex, \
+                                           test=test)
 
         # try:
             # pass
@@ -254,6 +261,123 @@ class media_all(media_base.media_prod):
                 raise ValueError("")
 
         return {'status': 'OK', 'idData': data_ex['idData']}
+
+
+    def post_video_bg(self, file, bg_task, **kwargs):
+        
+        logger.info("post_video_")
+        test = kwargs['test']
+        self.myclient.flush(test)
+        # logger.info(f'{file.filename}, {file.content_type}')
+        error_handling_video(file)
+
+        try:
+        # if True:
+            fname_org = file.filename
+            fname, uuid_f = get_fname_uuid(fname_org)
+            save_video(self.path_data, fname, file, test)
+
+            fname = self.converter(fname)
+            # logger.info(f"fname:{fname}")
+
+            # print(kwargs)
+            if "ext" in kwargs:
+                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+            else:
+                fname_ex_org = get_fname_prod(fname)
+            
+            _, uuid_ex = get_fname_uuid(fname_ex_org)
+            logger.info(f"fname:{fname_ex_org}")
+            
+            
+            
+            logger.info(f"record: {fname}")
+            data_org = self.myclient.record(self.path_data, \
+                                            fname_org, \
+                                            fname, \
+                                            uuid_f, \
+                                            status = 'created', \
+                                            test = test)
+
+            logger.info(f"record: {fname_ex_org}")
+            data_ex = self.myclient.record(self.path_data, \
+                                           fname_ex_org, \
+                                           fname_ex_org, \
+                                           uuid_ex, \
+                                           status = 'creating', \
+                                           test=test)
+            
+            kwargs["fname_org"] = fname_org
+            kwargs['client'] = self.myclient
+            kwargs['path_data'] = self.path_data
+            kwargs['fname_ex_org'] = fname_ex_org
+            kwargs['uuid_ex'] = uuid_ex
+
+            logger.info(f"data_ex : {data_ex}")
+
+            bg_task.add_task(self.draw_info2video, \
+                             f"{self.path_data}{fname}", \
+                             f"{self.path_data}{fname_ex_org}", \
+                             **kwargs)
+
+        # try:
+            # pass
+
+        except:
+            raise HTTPException(status_code=503, detail="Internal Error") 
+        
+        finally: 
+            if test is None:
+                pass
+            
+            elif type(test) is int:
+                if int(test) == 1:
+                    if os.path.exists(f"{self.path_data}{fname}") == True:
+                        os.remove(f"{self.path_data}{fname}")
+                    if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+                        os.remove(f"{self.path_data}{fname_ex_org}")
+            else:
+                raise ValueError("")
+
+        return {'status': 'OK', 'idData': data_ex['idData']}
+
+
+    def get_record(self, idData, **kwargs):
+        logger.info("get_record")
+        logger.info(f"idData: {idData}")
+
+        if idData is None:
+            raise HTTPException(status_code=400, detail="Value Error") 
+
+        test = kwargs['test']
+
+        if test == 1:
+            ret = dict(path = self.path_data, \
+                       fname = 'test.mp4', \
+                       status = 'created', \
+            )
+            
+        else:
+            ret = self.client.get_dataFrom_idData(idData)
+
+        return ret
+
+
+    def get_status(self, idData, **kwargs):
+        
+        logger.info("get_status")
+        logger.info(f"idData: {idData}")
+        if idData is None:
+            raise HTTPException(status_code=400, detail="Value Error") 
+
+        test = kwargs['test']
+
+        if test == 1:
+            ret = dict(status = 'created')
+        else:
+            ret = dict(status = self.myclient.get_status(idData))
+
+        return ret
 
 
     def get_image_(self, idData, **kwargs):

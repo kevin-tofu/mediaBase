@@ -38,13 +38,19 @@ class mongo_client(object):
         return self._collection.find_one(query)
 
 
-    def update_item(self, item_id, data):
+    def update_item_id(self, item_id, data):
         result = self._collection.update_one({"_id": ObjectId(item_id)}, \
                                              {"$set": data})
         if result.matched_count:
             result = self._collection.find_one({"_id": ObjectId(item_id)})
             return result
         return None
+
+    def update_item_key(self, _key, _key_item, _keyupdate, _keyupdate_item):
+        update = self._collection.update_one({_key: _key_item}, \
+                                             {'$set': {_keyupdate: _keyupdate_item}}
+        )
+        return update
 
     def delete_item(self, item_id):
         result = self._collection.delete_one({"_id": ObjectId(item_id)})
@@ -54,9 +60,6 @@ class mongo_client(object):
 
     def get_all_items(self):
         return [x for x in self._collection.find({})]
-
-    
-
 
 
 

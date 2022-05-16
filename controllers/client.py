@@ -31,17 +31,25 @@ class mongo_client_media(mongo_client):
 
 
 
-    def record(self, path, fname_org, fname, _uuid, test = None):
+    def record(self, 
+               path, \
+               fname_org, \
+               fname, \
+               _uuid, \
+               status = 'created', \
+               test = None):
 
         # uuid = str(uuid.uuid4())
-        data = {
-            'path': path,
-            'fname': fname,
-            'fname_org': fname_org,
-            'idData': _uuid,
-            'datatime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
-            'uxtime': time.time()
-        }
+        data = dict(
+            path = path, \
+            fname = fname, \
+            fname_org = fname_org, \
+            idData =  _uuid, \
+            datatime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'), \
+            uxtime = time.time(), \
+            status = status
+        )
+        print(data)
 
         # if test is not None or test == 0:
         # when it is testing, just return data without recording.
@@ -56,6 +64,9 @@ class mongo_client_media(mongo_client):
 
         return data
 
+    def get_status(self, idData):
+        data = self.get_item_query({'idData': idData})
+        return data['status']
 
     def get_dataFrom_dataID(self, dataID):
 
