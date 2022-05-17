@@ -221,6 +221,7 @@ class media_all(media_base.media_prod):
             logger.info(f"fname:{fname_ex_org}")
             
             kwargs["fname_org"] = fname_org
+            kwargs['fgbg'] = 'fg'
             # logger.info(f'{fname}, {fname_ex_org}')
             self.draw_info2video(f"{self.path_data}{fname}", \
                                  f"{self.path_data}{fname_ex_org}", \
@@ -312,6 +313,7 @@ class media_all(media_base.media_prod):
             kwargs['path_data'] = self.path_data
             kwargs['fname_ex_org'] = fname_ex_org
             kwargs['uuid_ex'] = uuid_ex
+            kwargs['fgbg'] = 'bg'
 
             logger.info(f"data_ex : {data_ex}")
 
