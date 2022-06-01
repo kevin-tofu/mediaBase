@@ -147,7 +147,8 @@ class media_prod(media_base):
         fname = None
         error_handling_video(file)
 
-        try:
+        # try:
+        if True:
             
             fname, uuid_f = utils.get_fname_uuid(file.filename)
             save_video(path_data, fname, file, test)
@@ -161,8 +162,8 @@ class media_prod(media_base):
             #     myclient.record(path_data, fname_json, test)
             # logger.info(f'saved: {path_data + fname_json}')
 
-        # try:    
-            # pass
+        try:    
+            pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
