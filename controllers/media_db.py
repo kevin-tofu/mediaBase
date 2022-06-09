@@ -38,7 +38,7 @@ class media_all(media_base.media_prod):
 
         self.myclient = client.mongo_client_media(_config)
 
-        self.path_data = _config.PATH_DATA
+        
         if os.path.exists(self.path_data) == False:
             os.makedirs(self.path_data)
     
@@ -59,20 +59,7 @@ class media_all(media_base.media_prod):
     #     stream = ffmpeg.output(stream, f"{self.path_data}{fname_dst}", v="quiet")
     #     ffmpeg.run(stream)
 
-    def converter(self, fname):
-
-        fname_noext = os.path.splitext(fname)[0]
-        fname_dst = f'{fname_noext}.mp4'
-        file_ext = os.path.splitext(fname)[-1]
-        if file_ext == ".mp4" or file_ext == ".MP4":
-            return fname
-        else:
-            # await self.convert2mp4(fname, fname_dst)
-            utils.convert2mp4(self.path_data, fname, fname_dst)
-
-            if os.path.exists(f"{self.path_data}{fname}") == True:
-                os.remove(f"{self.path_data}{fname}")
-            return fname_dst
+    
 
             
     async def post_2images_(self, file1, file2, **kwargs):
@@ -208,7 +195,7 @@ class media_all(media_base.media_prod):
             fname, uuid_f = get_fname_uuid(fname_org)
             save_video(self.path_data, fname, file, test)
 
-            fname = self.converter(fname)
+            fname = self.xxx2mp4(fname)
             # logger.info(f"fname:{fname}")
 
             # print(kwargs)
@@ -278,7 +265,7 @@ class media_all(media_base.media_prod):
             fname, uuid_f = get_fname_uuid(fname_org)
             save_video(self.path_data, fname, file, test)
 
-            fname = self.converter(fname)
+            fname = self.xxx2mp4(fname)
             # logger.info(f"fname:{fname}")
 
             # print(kwargs)

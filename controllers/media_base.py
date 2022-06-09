@@ -1,5 +1,6 @@
 
 import os, sys
+import time
 import config
 from logconf import mylogger
 logger = mylogger(__name__)
@@ -15,10 +16,18 @@ path_data = config.PATH_DATA
 if os.path.exists(path_data) == False:
     os.makedirs(path_data)
 
+def remove_file(path: str) -> None:
+
+    print("time")
+    time.sleep(30)
+    if os.path.exists(path) == True:
+        os.unlink(path)
+
 
 class media_base():
     def __init__(self, _config):
         self.config = _config
+        self.path_data = _config.PATH_DATA
     
     def get_info_2images(self, fpath_org1, fpath_org2, **kwargs):
         raise NotImplementedError()
@@ -31,6 +40,22 @@ class media_base():
     
     def post_anyfiles(self, files_list, **kwargs):
         raise NotImplementedError()
+
+    def xxx2mp4(self, fname):
+        """
+        """
+        fname_noext = os.path.splitext(fname)[0]
+        fname_dst = f'{fname_noext}.mp4'
+        file_ext = os.path.splitext(fname)[-1]
+        if file_ext == ".mp4" or file_ext == ".MP4":
+            return fname
+        else:
+            # await self.convert2mp4(fname, fname_dst)
+            utils.convert2mp4(self.path_data, fname, fname_dst)
+
+            if os.path.exists(f"{self.path_data}{fname}") == True:
+                os.remove(f"{self.path_data}{fname}")
+            return fname_dst
 
 
 class media_prod(media_base):
@@ -148,23 +173,18 @@ class media_prod(media_base):
         fname = None
         error_handling_video(file)
 
-        try:
-        # if True:
+        # try:
+        if True:
             
             fname, uuid_f = utils.get_fname_uuid(file.filename)
             save_video(path_data, fname, file, test)
+            fname = self.xxx2mp4(fname)
             fname_json = os.path.basename(fname) + '-video.json'
 
             kwargs["fname_org"] = file.filename
             result = self.get_info_video(f"{path_data}{fname}", **kwargs)
-            # logger.debug(result)
-            # with open(path_data + fname_json, 'w') as outfile:
-            #     json.dump(result, outfile)
-            #     myclient.record(path_data, fname_json, test)
-            # logger.info(f'saved: {path_data + fname_json}')
-
-        # try:    
-            # pass
+        try:    
+            pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
@@ -174,3 +194,54 @@ class media_prod(media_base):
         
         return result
 
+
+    def post_video_fg(self, file, bgtask, **kwargs):
+        """
+
+            https://stackoverflow.com/questions/64716495/how-to-delete-the-file-after-a-return-fileresponsefile-path
+        """
+        logger.info("post_video_fg")
+        test = kwargs['test']
+        error_handling_video(file)
+
+        # try:
+        if True:
+            fname_org = file.filename
+            fname, uuid_f = get_fname_uuid(fname_org)
+            save_video(self.path_data, fname, file, test)
+
+            fname = self.xxx2mp4(fname)
+            if "ext" in kwargs:
+                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+            else:
+                fname_ex_org = get_fname_prod(fname)
+            
+            _, uuid_ex = get_fname_uuid(fname_ex_org)
+            logger.info(f"fname:{fname_ex_org}")
+            
+            kwargs["fname_org"] = fname_org
+            kwargs['fgbg'] = 'fg'
+            # logger.info(f'{fname}, {fname_ex_org}')
+            self.draw_info2video(f"{self.path_data}{fname}", \
+                                 f"{self.path_data}{fname_ex_org}", \
+                                 **kwargs)
+        
+            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
+
+        try:
+            pass
+        except:
+            raise HTTPException(status_code=503, detail="Internal Error") 
+        
+        finally: 
+            if os.path.exists(f"{self.path_data}{fname}") == True:
+                os.remove(f"{self.path_data}{fname}")
+
+            
+
+        
+        # return FileResponse(f"{self.path_data}{fname_ex_org}")
+        if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+            return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
+        else:
+            raise HTTPException(status_code=500, detail='Error')
