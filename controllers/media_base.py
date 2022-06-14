@@ -110,7 +110,7 @@ class media_base():
 
         logger.info("post_image_fg")
         test = kwargs['test']
-        error_handling_video(file)
+        error_handling_image(file)
 
         try:
         # if True:
