@@ -22,7 +22,7 @@ def remove_file(path_file: str, sleep_sec: int=30) -> None:
     time.sleep(sleep_sec)
     if os.path.exists(path_file) == True:
         os.unlink(path_file)
-        logger.info('removed : {path_file}')
+        logger.info(f'removed : {path_file}')
 
 def remove_files(path_files: str, sleep_sec: int=30) -> None:
 
@@ -31,7 +31,7 @@ def remove_files(path_files: str, sleep_sec: int=30) -> None:
     for path_file in path_files:
         if os.path.exists(path_file) == True:
             os.unlink(path_file)
-            logger.info('removed : {path_file}')
+            logger.info(f'removed : {path_file}')
 
 class media_base():
     def __init__(self, _config):
