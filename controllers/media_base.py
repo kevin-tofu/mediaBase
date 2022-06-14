@@ -138,7 +138,7 @@ class media_base():
                 return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
             else:
                 raise Exception("Error") 
-                
+
         # try:
             # pass
         except:
@@ -177,7 +177,7 @@ class media_base():
             kwargs["fname_org"] = fname_org
             kwargs['fgbg'] = 'fg'
             # logger.info(f'{fname}, {fname_ex_org}')
-            self.draw_info2video(f"{self.path_data}{fname}", \
+            self.draw_info2image(f"{self.path_data}{fname}", \
                                  f"{self.path_data}{fname_ex_org}", \
                                  **kwargs)
         
