@@ -135,7 +135,8 @@ class media_base():
         
             bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
             if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
-                return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
+                return FileResponse(f"{self.path_data}{fname_ex_org}")
+                # return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
             else:
                 raise Exception("Error") 
                 
