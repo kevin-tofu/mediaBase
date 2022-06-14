@@ -19,6 +19,7 @@ def error_handling_image_ext(ext_i):
 def error_handling_video_ext(ext_v):
     extention_video = ext_v in ('mp4', 'MP4', 'AVI', 'avi', 'MOV', 'mov', 'wmv', 'WMV')
     if not extention_video:
+
         raise HTTPException(status_code=400, detail="The file is NOT mp4 or avi or mov or wmv")
 
 def error_handling_json_ext(ext_i):
@@ -30,6 +31,28 @@ def error_handling_json_ext(ext_i):
 #     extention_video = ext_v in ('mp4', 'MP4')
 #     if not extention_video:
 #         raise HTTPException(status_code=400, detail="The file is NOT mp4")
+
+
+def error_handling_image(file):
+    error_handling_image_ext(file.filename.split('.')[-1])
+
+def error_handling_video(file):
+    error_handling_video_ext(file.filename.split('.')[-1])
+
+def error_handling_json(file):
+    error_handling_json_ext(file.filename.split('.')[-1])
+
+def error_handling_image_fpath(fpath):
+    file_name, file_extension = os.path.splitext(fpath)
+    error_handling_image_ext(file_extension[1::])
+
+def error_handling_video_fpath(fpath):
+    file_name, file_extension = os.path.splitext(fpath)
+    error_handling_video_ext(file_extension[1::])
+
+def error_handling_json_fpath(fpath):
+    file_name, file_extension = os.path.splitext(fpath)
+    error_handling_json_ext(file_extension[1::])
 
 
 def get_fname_uuid(fname):
@@ -62,15 +85,6 @@ def get_fname_prod(fname, ext=None):
     return fname_prod
 
 
-def error_handling_image(file):
-    error_handling_image_ext(file.filename.split('.')[-1])
-
-def error_handling_video(file):
-    error_handling_video_ext(file.filename.split('.')[-1])
-
-
-def error_handling_json(file):
-    error_handling_json_ext(file.filename.split('.')[-1])
 
 async def read_image(file) -> Image.Image:
 
@@ -100,6 +114,16 @@ async def read_save_image(_path, _fname, _file, test):
 
     return ret
 
+
+def save_file(path, fname, file, test):
+
+    logger.debug("save_file")
+    try:
+        with open(f"{path}/{fname}", 'wb') as local_temp_file:
+            local_temp_file.write(file.file.read())
+        # myclient.record(path, fname, test)
+    except:
+        raise HTTPException(status_code=400, detail='File Definition Error')
 
 def save_video(path, fname, file, test):
 

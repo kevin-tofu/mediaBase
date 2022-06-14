@@ -16,13 +16,20 @@ path_data = config.PATH_DATA
 if os.path.exists(path_data) == False:
     os.makedirs(path_data)
 
-def remove_file(path: str) -> None:
+def remove_file(path_file: str, sleep_sec: int=30) -> None:
 
     print("time")
-    time.sleep(30)
-    if os.path.exists(path) == True:
-        os.unlink(path)
+    time.sleep(sleep_sec)
+    if os.path.exists(path_file) == True:
+        os.unlink(path_file)
 
+def remove_files(path_files: str, sleep_sec: int=30) -> None:
+
+    print("time")
+    time.sleep(sleep_sec)
+    for path_file in path_files:
+        if os.path.exists(path_file) == True:
+            os.unlink(path_file)
 
 class media_base():
     def __init__(self, _config):
@@ -58,33 +65,47 @@ class media_base():
             return fname_dst
 
 
-class media_prod(media_base):
-    def __init__(self, _config):
-        super().__init__(_config)
+    def process_anyfiles_fg(self, files_list, bgtask, **kwargs):
+        raise NotImplementedError()
 
-    def post_files(self, files_list, **kwargs):
 
-        logger.debug("post_files")
+    def post_anyfiles_fg(self, files_list, bgtask, **kwargs):
+
+        logger.info("post_anyfiles_fg")
         test = kwargs['test']
 
+        path_files_list = list()
         for file in files_list:
             logger.info(f'{file.filename}, {file.content_type}')
+            fname, uuid_f = utils.get_fname_uuid(file.filename)
+            save_file(self.path_data, fname, file, test)
+            path_files_list.append(f"{self.path_data}{fname}")
         
-        try:
-        # if True:
-            logger.debug("post_anyfiles")
-            result = self.post_anyfiles(files_list, **kwargs)
+        # try:
+        if True:
+            
+            result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
+
+            bgtask.add_task(remove_files, files_list, 30)
+
             return result
 
-        # try:
-            # pass
+        try:
+            pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
             # print("finally0")
             pass
-            
 
+class media_prod(media_base):
+    def __init__(self, _config):
+        super().__init__(_config)
+
+
+    
+
+    
     async def post_info_2images_(self, file1, file2, **kwargs):
 
         logger.debug("post_coco_image_")
@@ -177,7 +198,7 @@ class media_prod(media_base):
         if True:
             
             fname, uuid_f = utils.get_fname_uuid(file.filename)
-            save_video(path_data, fname, file, test)
+            save_file(path_data, fname, file, test)
             fname = self.xxx2mp4(fname)
             fname_json = os.path.basename(fname) + '-video.json'
 
@@ -208,7 +229,7 @@ class media_prod(media_base):
         if True:
             fname_org = file.filename
             fname, uuid_f = get_fname_uuid(fname_org)
-            save_video(self.path_data, fname, file, test)
+            save_file(self.path_data, fname, file, test)
 
             fname = self.xxx2mp4(fname)
             if "ext" in kwargs:
