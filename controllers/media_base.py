@@ -38,7 +38,8 @@ class media_base():
         self.config = _config
         self.path_data = _config.PATH_DATA
         self.sleep_sec_remove = _config.SLEEP_SEC_REMOVE
-    
+        self.sleep_sec_remove_response = _config.SLEEP_SEC_REMOVE_RESPONSE
+
     def get_info_2images(self, fpath_org1, fpath_org2, **kwargs):
         raise NotImplementedError()
 
@@ -84,22 +85,118 @@ class media_base():
             save_file(self.path_data, fname, file, test)
             path_files_list.append(f"{self.path_data}{fname}")
         
-        # try:
-        if True:
+        try:
+        # if True:
             
             result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
 
             bgtask.add_task(remove_files, path_files_list, self.sleep_sec_remove)
 
             return result
-
-        try:
-            pass
+        # try:
+            # pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
             # print("finally0")
             pass
+
+
+    def post_image_fg(self, file, bgtask, **kwargs):
+        """
+
+            https://stackoverflow.com/questions/64716495/how-to-delete-the-file-after-a-return-fileresponsefile-path
+        """
+
+        logger.info("post_image_fg")
+        test = kwargs['test']
+        error_handling_video(file)
+
+        try:
+        # if True:
+            fname_org = file.filename
+            fname, uuid_f = get_fname_uuid(fname_org)
+            save_file(self.path_data, fname, file, test)
+
+            if "ext" in kwargs:
+                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+            else:
+                fname_ex_org = get_fname_prod(fname)
+            
+            _, uuid_ex = get_fname_uuid(fname_ex_org)
+            logger.info(f"fname:{fname_ex_org}")
+            
+            kwargs["fname_org"] = fname_org
+            kwargs['fgbg'] = 'fg'
+            # logger.info(f'{fname}, {fname_ex_org}')
+            self.draw_info2video(f"{self.path_data}{fname}", \
+                                 f"{self.path_data}{fname_ex_org}", \
+                                 **kwargs)
+        
+            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
+            if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+                return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
+            else:
+                raise Exception("Error") 
+                
+        # try:
+            # pass
+        except:
+            raise HTTPException(status_code=503, detail="Internal Error") 
+        
+        finally: 
+            if os.path.exists(f"{self.path_data}{fname}") == True:
+                os.remove(f"{self.path_data}{fname}")
+
+        
+
+    def post_video_fg(self, file, bgtask, **kwargs):
+        """
+
+            https://stackoverflow.com/questions/64716495/how-to-delete-the-file-after-a-return-fileresponsefile-path
+        """
+        logger.info("post_video_fg")
+        test = kwargs['test']
+        error_handling_video(file)
+
+        try:
+        # if True:
+            fname_org = file.filename
+            fname, uuid_f = get_fname_uuid(fname_org)
+            save_file(self.path_data, fname, file, test)
+
+            fname = self.xxx2mp4(fname)
+            if "ext" in kwargs:
+                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
+            else:
+                fname_ex_org = get_fname_prod(fname)
+            
+            _, uuid_ex = get_fname_uuid(fname_ex_org)
+            logger.info(f"fname:{fname_ex_org}")
+            
+            kwargs["fname_org"] = fname_org
+            kwargs['fgbg'] = 'fg'
+            # logger.info(f'{fname}, {fname_ex_org}')
+            self.draw_info2video(f"{self.path_data}{fname}", \
+                                 f"{self.path_data}{fname_ex_org}", \
+                                 **kwargs)
+        
+            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
+            if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+                return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
+            else:
+                raise Exception("Error") 
+
+        # try:
+            # pass
+        except:
+            raise HTTPException(status_code=503, detail="Internal Error") 
+        
+        finally: 
+            if os.path.exists(f"{self.path_data}{fname}") == True:
+                os.remove(f"{self.path_data}{fname}")
+
+        
 
 class media_prod(media_base):
     def __init__(self, _config):
@@ -163,19 +260,9 @@ class media_prod(media_base):
 
             fname, uuid_f = utils.get_fname_uuid(file.filename)
             image = await read_save_image(path_data, fname, file, test)
-            # image = await read_image(path_data, fname, file, test)
-            # fname_json = os.path.basename(fname) + '-video.json'
             
             kwargs["fname_org"] = file.filename
             result = self.get_info_image(f"{path_data}{fname}", **kwargs)
-            # result = self.get_info_image(image, **kwargs)
-            # logger.debug(result)
-            # with open(path_data + fname_json, 'w') as outfile:
-            #     json.dump(result, outfile)
-            #     myclient.record(path_data, fname_json, test)
-            # logger.info(f'saved: {path_data + fname_json}')
-
-            # pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
@@ -194,8 +281,8 @@ class media_prod(media_base):
         fname = None
         error_handling_video(file)
 
-        # try:
-        if True:
+        try:
+        # if True:
             
             fname, uuid_f = utils.get_fname_uuid(file.filename)
             save_file(path_data, fname, file, test)
@@ -204,8 +291,8 @@ class media_prod(media_base):
 
             kwargs["fname_org"] = file.filename
             result = self.get_info_video(f"{path_data}{fname}", **kwargs)
-        try:    
-            pass
+        # try:    
+            # pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
@@ -215,54 +302,3 @@ class media_prod(media_base):
         
         return result
 
-
-    def post_video_fg(self, file, bgtask, **kwargs):
-        """
-
-            https://stackoverflow.com/questions/64716495/how-to-delete-the-file-after-a-return-fileresponsefile-path
-        """
-        logger.info("post_video_fg")
-        test = kwargs['test']
-        error_handling_video(file)
-
-        # try:
-        if True:
-            fname_org = file.filename
-            fname, uuid_f = get_fname_uuid(fname_org)
-            save_file(self.path_data, fname, file, test)
-
-            fname = self.xxx2mp4(fname)
-            if "ext" in kwargs:
-                fname_ex_org = get_fname_prod(fname, ext=kwargs['ext'])
-            else:
-                fname_ex_org = get_fname_prod(fname)
-            
-            _, uuid_ex = get_fname_uuid(fname_ex_org)
-            logger.info(f"fname:{fname_ex_org}")
-            
-            kwargs["fname_org"] = fname_org
-            kwargs['fgbg'] = 'fg'
-            # logger.info(f'{fname}, {fname_ex_org}')
-            self.draw_info2video(f"{self.path_data}{fname}", \
-                                 f"{self.path_data}{fname_ex_org}", \
-                                 **kwargs)
-        
-            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
-
-        try:
-            pass
-        except:
-            raise HTTPException(status_code=503, detail="Internal Error") 
-        
-        finally: 
-            if os.path.exists(f"{self.path_data}{fname}") == True:
-                os.remove(f"{self.path_data}{fname}")
-
-            
-
-        
-        # return FileResponse(f"{self.path_data}{fname_ex_org}")
-        if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
-            return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
-        else:
-            raise HTTPException(status_code=500, detail='Error')
