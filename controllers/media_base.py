@@ -89,7 +89,7 @@ class media_base():
             
             result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
 
-            bgtask.add_task(remove_files, path_files_list, 30)
+            bgtask.add_task(remove_files, path_files_list, self.sleep_sec_remove)
 
             return result
 
