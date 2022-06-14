@@ -18,18 +18,20 @@ if os.path.exists(path_data) == False:
 
 def remove_file(path_file: str, sleep_sec: int=30) -> None:
 
-    print("time")
+    logger.info('timer')
     time.sleep(sleep_sec)
     if os.path.exists(path_file) == True:
         os.unlink(path_file)
+        logger.info('removed : {path_file}')
 
 def remove_files(path_files: str, sleep_sec: int=30) -> None:
 
-    print("time")
+    logger.info('timer')
     time.sleep(sleep_sec)
     for path_file in path_files:
         if os.path.exists(path_file) == True:
             os.unlink(path_file)
+            logger.info('removed : {path_file}')
 
 class media_base():
     def __init__(self, _config):
@@ -86,7 +88,7 @@ class media_base():
             
             result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
 
-            bgtask.add_task(remove_files, files_list, 30)
+            bgtask.add_task(remove_files, path_files_list, 30)
 
             return result
 
@@ -101,9 +103,6 @@ class media_base():
 class media_prod(media_base):
     def __init__(self, _config):
         super().__init__(_config)
-
-
-    
 
     
     async def post_info_2images_(self, file1, file2, **kwargs):
