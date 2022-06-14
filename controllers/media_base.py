@@ -37,6 +37,7 @@ class media_base():
     def __init__(self, _config):
         self.config = _config
         self.path_data = _config.PATH_DATA
+        self.sleep_sec_remove = _config.SLEEP_SEC_REMOVE
     
     def get_info_2images(self, fpath_org1, fpath_org2, **kwargs):
         raise NotImplementedError()
