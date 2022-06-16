@@ -19,7 +19,7 @@ if os.path.exists(path_data) == False:
 def remove_file(path_file: str, sleep_sec: int=30) -> None:
 
     logger.info('timer')
-    time.sleep(sleep_sec)
+    # time.sleep(sleep_sec)
     if os.path.exists(path_file) == True:
         os.unlink(path_file)
         logger.info(f'removed : {path_file}')
@@ -27,7 +27,7 @@ def remove_file(path_file: str, sleep_sec: int=30) -> None:
 def remove_files(path_files: str, sleep_sec: int=30) -> None:
 
     logger.info('timer')
-    time.sleep(sleep_sec)
+    # time.sleep(sleep_sec)
     for path_file in path_files:
         if os.path.exists(path_file) == True:
             os.unlink(path_file)
@@ -37,8 +37,8 @@ class media_base():
     def __init__(self, _config):
         self.config = _config
         self.path_data = _config.PATH_DATA
-        self.sleep_sec_remove = _config.SLEEP_SEC_REMOVE
-        self.sleep_sec_remove_response = _config.SLEEP_SEC_REMOVE_RESPONSE
+        # self.sleep_sec_remove = _config.SLEEP_SEC_REMOVE
+        # self.sleep_sec_remove_response = _config.SLEEP_SEC_REMOVE_RESPONSE
 
     def get_info_2images(self, fpath_org1, fpath_org2, **kwargs):
         raise NotImplementedError()
@@ -85,16 +85,16 @@ class media_base():
             save_file(self.path_data, fname, file, test)
             path_files_list.append(f"{self.path_data}{fname}")
         
-        try:
-        # if True:
+        # try:
+        if True:
             
             result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
 
             bgtask.add_task(remove_files, path_files_list, self.sleep_sec_remove)
 
             return result
-        # try:
-            # pass
+        try:
+            pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
@@ -133,9 +133,12 @@ class media_base():
                                  f"{self.path_data}{fname_ex_org}", \
                                  **kwargs)
         
-            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
+            # bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
+            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
             if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
-                return FileResponse(f"{self.path_data}{fname_ex_org}")
+                return FileResponse(f"{self.path_data}{fname_ex_org}", \
+                                    background=bgtask)
+
                 # return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
             else:
                 raise Exception("Error") 
@@ -182,9 +185,11 @@ class media_base():
                                  f"{self.path_data}{fname_ex_org}", \
                                  **kwargs)
         
-            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
+            bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
             if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
-                return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
+                return FileResponse(f"{self.path_data}{fname_ex_org}", \
+                                    filename=f"{self.path_data}{fname_ex_org}", \
+                                    background=bgtask)
             else:
                 raise Exception("Error") 
 
