@@ -78,23 +78,24 @@ class media_base():
         logger.info("post_anyfiles_fg")
         test = kwargs['test']
 
-        path_files_list = list()
-        for file in files_list:
-            logger.info(f'{file.filename}, {file.content_type}')
-            fname, uuid_f = utils.get_fname_uuid(file.filename)
-            save_file(self.path_data, fname, file, test)
-            path_files_list.append(f"{self.path_data}{fname}")
-        
-        # try:
-        if True:
+        try:
+        # if True:
+
+            path_files_list = list()
+            for file in files_list:
+                logger.info(f'{file.filename}, {file.content_type}')
+                fname, uuid_f = utils.get_fname_uuid(file.filename)
+                save_file(self.path_data, fname, file, test)
+                path_files_list.append(f"{self.path_data}{fname}")
             
             result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
 
-            bgtask.add_task(remove_files, path_files_list, self.sleep_sec_remove)
+            bgtask.add_task(remove_files, path_files_list)
+            # bgtask.add_task(remove_files, path_files_list, self.sleep_sec_remove)
 
             return result
-        try:
-            pass
+        # try:
+            # pass
         except:
             raise HTTPException(status_code=503, detail="Error") 
         finally:
