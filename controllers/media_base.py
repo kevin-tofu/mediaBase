@@ -137,8 +137,11 @@ class media_base():
             # bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
             bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
             if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+
+                _, ext = os.path.splitext(os.path.basename(fname_ex_org))
                 return FileResponse(f"{self.path_data}{fname_ex_org}", \
                                     filename=f"{self.path_data}{fname_ex_org}", \
+                                    media_type = f'image/{ext[1::]}', \
                                     background=bgtask)
 
                 # return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
@@ -189,8 +192,10 @@ class media_base():
         
             bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
             if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+                _, ext = os.path.splitext(os.path.basename(fname_ex_org))
                 return FileResponse(f"{self.path_data}{fname_ex_org}", \
                                     filename=f"{self.path_data}{fname_ex_org}", \
+                                    media_type = f'video/{ext[1::]}', \
                                     background=bgtask)
             else:
                 raise Exception("Error") 
