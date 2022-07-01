@@ -141,7 +141,7 @@ class media_base():
                 _, ext = os.path.splitext(os.path.basename(fname_ex_org))
                 return FileResponse(f"{self.path_data}{fname_ex_org}", \
                                     # filename=f"{self.path_data}{fname_ex_org}", \
-                                    filename=f"{fname_ex_org}", \
+                                    # filename=f"{fname_ex_org}", \
                                     media_type = f'image/{ext[1::]}', \
                                     background=bgtask)
 
