@@ -392,7 +392,11 @@ class media_all(media_base.media_prod):
                 raise HTTPException(status_code=400, detail='Error')
 
         if os.path.exists(path_export) == True:
-            return FileResponse(path_export)
+            _, ext = os.path.splitext(os.path.basename(path_export))
+            return FileResponse(path_export, \
+                                filename=path_export, \
+                                media_type = f'image/{ext[1::]}', \
+                )
         else:
             raise HTTPException(status_code=500, detail='Error')
             
@@ -419,7 +423,11 @@ class media_all(media_base.media_prod):
         
         logger.info(f'export: {path_export}')
         if os.path.exists(path_export) == True:
-            return FileResponse(path_export, filename=path_export)
+            _, ext = os.path.splitext(os.path.basename(path_export))
+            return FileResponse(path_export, \
+                                filename=path_export, \
+                                media_type = f'video/{ext[1::]}'\
+                    )
         else:
             raise HTTPException(status_code=500, detail='Error')
         
