@@ -17,19 +17,14 @@ class mongo_client(object):
         self._db = self._client[_config.MONGODB_DATABASE]
         self._collection = self._db[_config.MONGODB_COLLECTION]
 
-        if False:
-            data = {
-            "test0": 1234,
-            "test1": "1234"
-            }
-            _id = self.insert_item(data)
-            result = self.delete_item(_id)
-            print(_id, result)
-
 
     def insert_item(self, data):
-        inserted_id = self._collection.insert_one(data).inserted_id
-        return inserted_id
+        # inserted_id = self._collection.insert_one(data).inserted_id
+        # return inserted_id
+        result = self._collection.insert_one(data)
+        return result
+
+
 
     def get_item_id(self, item_id):
         return self._collection.find_one({"_id": ObjectId(item_id)})
@@ -77,6 +72,6 @@ if __name__ == '__main__':
         "test0": 1234,
         "test1": "1234"
     }
-    _id = myclient.insert_item(data)
+    _id = myclient.insert_item(data).inserted_id
     result = myclient.delete_item(_id)
     print(_id, result)

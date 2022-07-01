@@ -59,7 +59,7 @@ class mongo_client_media(mongo_client):
         elif test is not None:
             return data
 
-        _id = self.insert_item(data)
+        _id = self.insert_item(data).inserted_id
         # print(_id, data)
 
         return data
