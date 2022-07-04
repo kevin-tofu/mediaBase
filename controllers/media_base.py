@@ -135,19 +135,23 @@ class media_base():
                                  **kwargs)
         
             # bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}", self.sleep_sec_remove_response)
+            bgtask.add_task(remove_file, f"{self.path_data}{fname}")
             bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
-            if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+            # if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
 
-                _, ext = os.path.splitext(os.path.basename(fname_ex_org))
-                return FileResponse(f"{self.path_data}{fname_ex_org}", \
-                                    # filename=f"{self.path_data}{fname_ex_org}", \
-                                    # filename=f"{fname_ex_org}", \
-                                    media_type = f'image/{ext[1::]}', \
-                                    background=bgtask)
+            _, ext = os.path.splitext(os.path.basename(fname_ex_org))
+            return FileResponse(f"{self.path_data}{fname_ex_org}", \
+                                # filename=f"{self.path_data}{fname_ex_org}", \
+                                # filename=f"{fname_ex_org}", \
+                                media_type = f'image/{ext[1::]}', \
+                                background=bgtask)
+            
+            # _, image_enc = cv2.imencode('.png', image[:, :, ::-1])
+            # return Response(content = image_enc.tostring(), media_type='image/png')
 
                 # return FileResponse(f"{self.path_data}{fname_ex_org}", filename=f"{self.path_data}{fname_ex_org}")
-            else:
-                raise Exception("Error") 
+            # else:
+            #     raise Exception("Error") 
                 
         # try:
             # pass
@@ -155,8 +159,9 @@ class media_base():
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally: 
-            if os.path.exists(f"{self.path_data}{fname}") == True:
-                os.remove(f"{self.path_data}{fname}")
+            pass
+            # if os.path.exists(f"{self.path_data}{fname}") == True:
+            #     os.remove(f"{self.path_data}{fname}")
 
         
 
@@ -191,16 +196,17 @@ class media_base():
                                  f"{self.path_data}{fname_ex_org}", \
                                  **kwargs)
         
+            bgtask.add_task(remove_file, f"{self.path_data}{fname}")
             bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
-            if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
-                _, ext = os.path.splitext(os.path.basename(fname_ex_org))
-                return FileResponse(f"{self.path_data}{fname_ex_org}", \
-                                    filename=f"{fname_ex_org}", \
-                                    # filename=f"{self.path_data}{fname_ex_org}", \
-                                    media_type = f'video/{ext[1::]}', \
-                                    background=bgtask)
-            else:
-                raise Exception("Error") 
+            # if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
+            _, ext = os.path.splitext(os.path.basename(fname_ex_org))
+            return FileResponse(f"{self.path_data}{fname_ex_org}", \
+                                filename=f"{fname_ex_org}", \
+                                # filename=f"{self.path_data}{fname_ex_org}", \
+                                media_type = f'video/{ext[1::]}', \
+                                background=bgtask)
+            # else:
+            #     raise Exception("Error") 
 
         # try:
             # pass
@@ -208,8 +214,9 @@ class media_base():
             raise HTTPException(status_code=503, detail="Internal Error") 
         
         finally: 
-            if os.path.exists(f"{self.path_data}{fname}") == True:
-                os.remove(f"{self.path_data}{fname}")
+            # if os.path.exists(f"{self.path_data}{fname}") == True:
+            #     os.remove(f"{self.path_data}{fname}")
+            pass
 
         
 
