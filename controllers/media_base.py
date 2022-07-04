@@ -148,7 +148,7 @@ class media_base():
 
             from fastapi import Response
             import cv2
-            img = cv2.imread(f"{self.path_data}{fname}")
+            img = cv2.imread(f"{self.path_data}{fname_ex_org}")
             _, image_enc = cv2.imencode('.png', img)
             return Response(content = image_enc.tostring(), \
                             media_type = 'image/png', \
