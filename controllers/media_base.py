@@ -139,12 +139,21 @@ class media_base():
             bgtask.add_task(remove_file, f"{self.path_data}{fname_ex_org}")
             # if os.path.exists(f"{self.path_data}{fname_ex_org}") == True:
 
-            _, ext = os.path.splitext(os.path.basename(fname_ex_org))
-            return FileResponse(f"{self.path_data}{fname_ex_org}", \
-                                # filename=f"{self.path_data}{fname_ex_org}", \
-                                # filename=f"{fname_ex_org}", \
-                                media_type = f'image/{ext[1::]}', \
-                                background=bgtask)
+            # _, ext = os.path.splitext(os.path.basename(fname_ex_org))
+            # return FileResponse(f"{self.path_data}{fname_ex_org}", \
+            #                     # filename=f"{self.path_data}{fname_ex_org}", \
+            #                     # filename=f"{fname_ex_org}", \
+            #                     media_type = f'image/{ext[1::]}', \
+            #                     background=bgtask)
+
+            from fastapi import Response
+            import cv2
+            img = cv2.imread(f"{self.path_data}{fname}")
+            _, image_enc = cv2.imencode('.png', img)
+            return Response(content = image_enc.tostring(), \
+                            media_type = 'image/png', \
+                            background=bgtask
+            )
             
             # _, image_enc = cv2.imencode('.png', image[:, :, ::-1])
             # return Response(content = image_enc.tostring(), media_type='image/png')
