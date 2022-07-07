@@ -12,15 +12,12 @@ print('__name__', __name__)
 from mediaBase.database import mongo_client
 
 
+
 class mongo_client_media(mongo_client):
     
     def __init__(self, _config):
         
-        # super().__init__()
-        # self.myclient = mongo_client(_config)
-        
         super().__init__(_config)
-        self.DELETE_INTERVAL = float(_config.DELETE_INTERVAL)
 
         # if True:
         if False:
@@ -28,8 +25,6 @@ class mongo_client_media(mongo_client):
             _id = data['_id']
             result = self.delete_item(_id)
             print(_id, result)
-
-
 
     def record(self, 
                path, \
@@ -78,8 +73,26 @@ class mongo_client_media(mongo_client):
         data = self.get_item_query({'idData': idData})
         return data
 
+    def flush_data(self, idData : str):
+        data = self.get_dataFrom_idData(idData)
+        fname = data["fname"]
+        print(data)
+        print(data["_id"], type(data["_id"]))
 
-    def flush(self, test):
+        if os.path.exists(f"{self.path_data}{fname}") == True:
+            os.remove(f"{self.path_data}{fname}")
+
+
+
+class mongo_client_media_timer(mongo_client_media):
+    
+    def __init__(self, _config):
+        
+        super().__init__(_config)
+        self.DELETE_INTERVAL = float(_config.DELETE_INTERVAL)
+
+
+    def flush_timer(self, test):
 
         if test is not None:
             return
