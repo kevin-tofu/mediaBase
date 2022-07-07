@@ -32,6 +32,7 @@ class mongo_client_media(mongo_client):
                fname, \
                _uuid, \
                status = 'created', \
+               description = '', \
                test = None):
 
         # uuid = str(uuid.uuid4())
@@ -42,6 +43,7 @@ class mongo_client_media(mongo_client):
             idData =  _uuid, \
             datatime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'), \
             uxtime = time.time(), \
+            description = description, \
             status = status
         )
         print(data)
