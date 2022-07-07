@@ -75,13 +75,15 @@ class mongo_client_media(mongo_client):
 
     def flush_data(self, idData : str):
         data = self.get_dataFrom_idData(idData)
+        path_data = data["path"]
         fname = data["fname"]
-        print(data)
-        print(data["_id"], type(data["_id"]))
+        # print(data)
+        # print(data["_id"], type(data["_id"]))
 
-        if os.path.exists(f"{self.path_data}{fname}") == True:
-            os.remove(f"{self.path_data}{fname}")
+        if os.path.exists(f"{path_data}{fname}") == True:
+            os.remove(f"{path_data}{fname}")
 
+        return self.delete_item(str(data["_id"]))
 
 
 class mongo_client_media_timer(mongo_client_media):

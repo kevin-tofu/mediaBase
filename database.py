@@ -58,7 +58,7 @@ class mongo_client(object):
         )
         return update
 
-    def delete_item(self, item_id):
+    def delete_item(self, item_id: str):
         result = self._collection.delete_one({"_id": ObjectId(item_id)})
         if result.deleted_count:
             return True
