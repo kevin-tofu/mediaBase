@@ -12,10 +12,17 @@ class mongo_client(object):
         print(f"MONGODB_DATABASE: {_config.MONGODB_DATABASE}")
         print(f"MONGODB_COLLECTION: {_config.MONGODB_COLLECTION}")
 
+        if _config.MONGODB_PORT is None:
+            url_base = f'{_config.MONGODB_URL}'
+        else:
+            url_base = f'{_config.MONGODB_URL}:{_config.MONGODB_PORT}'
+
+        # mongodb://root:example@mongo:27017/
         if _config.MONGODB_USER is None or _config.MONGODB_PASSWORD is None:
-            url = f'mongodb://{_config.MONGODB_URL}:{_config.MONGODB_PORT}'
+            url = f'mongodb://{url_base}'
         else:    
-            url = f'mongodb://%s:%s@{_config.MONGODB_URL}:{_config.MONGODB_PORT}' % (_config.MONGODB_USER, _config.MONGODB_PASSWORD)
+            url = f'mongodb://%s:%s@{url_base}' % (_config.MONGODB_USER, _config.MONGODB_PASSWORD)
+        
         print(f"url : {url}")
         self._client = MongoClient(url)
         # client_2 = MongoClient('localhost', 27017)
