@@ -22,6 +22,7 @@ class mongo_client(object):
             url = f'mongodb://{url_base}'
         else:    
             url = f'mongodb://%s:%s@{url_base}' % (_config.MONGODB_USER, _config.MONGODB_PASSWORD)
+            # url = f'mongodb://%s:%s@{_config.MONGODB_URL}:{_config.MONGODB_PORT}' % (_config.MONGODB_USER, _config.MONGODB_PASSWORD)
         
         print(f"url : {url}")
         self._client = MongoClient(url)

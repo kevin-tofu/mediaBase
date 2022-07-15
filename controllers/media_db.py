@@ -67,7 +67,7 @@ class media_all(media_base.media_prod):
         logger.info("post_2images_")
         test = kwargs['test']
 
-        self.myclient.flush(test)
+        self.myclient.flush_timer(test)
         error_handling_image(file1)
         error_handling_image(file2)
         
@@ -133,7 +133,7 @@ class media_all(media_base.media_prod):
         logger.info("post_image_")
         test = kwargs['test']
 
-        self.myclient.flush(test)
+        self.myclient.flush_timer(test)
         error_handling_image(file)
         
         try:
@@ -185,7 +185,7 @@ class media_all(media_base.media_prod):
         
         logger.info("post_video_")
         test = kwargs['test']
-        self.myclient.flush(test)
+        self.myclient.flush_timer(test)
         # logger.info(f'{file.filename}, {file.content_type}')
         error_handling_video(file)
 
@@ -255,7 +255,7 @@ class media_all(media_base.media_prod):
         
         logger.info("post_video_")
         test = kwargs['test']
-        self.myclient.flush(test)
+        self.myclient.flush_timer(test)
         # logger.info(f'{file.filename}, {file.content_type}')
         error_handling_video(file)
 
