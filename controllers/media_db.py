@@ -36,7 +36,8 @@ class media_all(media_base.media_prod):
     def __init__(self, _config):
         super().__init__(_config)
 
-        self.myclient = client.mongo_client_media(_config)
+        self.myclient = client.mongo_client_media_timer(_config)
+        # self.myclient = client.mongo_client_media(_config)
 
         
         if os.path.exists(self.path_data) == False:
