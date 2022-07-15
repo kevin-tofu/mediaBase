@@ -15,7 +15,8 @@ class mongo_client(object):
         if _config.MONGODB_PORT is None:
             url_base = f'{_config.MONGODB_URL}'
         else:
-            url_base = f'{_config.MONGODB_URL}:{_config.MONGODB_PORT}'
+            port = int(_config.MONGODB_PORT)
+            url_base = f'{_config.MONGODB_URL}:{port}'
 
         # mongodb://root:example@mongo:27017/
         if _config.MONGODB_USER is None or _config.MONGODB_PASSWORD is None:
