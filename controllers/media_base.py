@@ -69,7 +69,7 @@ class media_base():
             return fname_dst
 
 
-    def process_anyfiles_fg(self, files_list, bgtask, **kwargs):
+    def process_anyfiles_fg(self, fname_list, bgtask, **kwargs):
         raise NotImplementedError()
 
 
@@ -82,13 +82,18 @@ class media_base():
         # if True:
 
             path_files_list = list()
+            fname_list = list()
             for file in files_list:
                 logger.info(f'{file.filename}, {file.content_type}')
-                fname, uuid_f = utils.get_fname_uuid(file.filename)
+
+                fname_org = file.filename
+                fname, uuid_f = utils.get_fname_uuid(fname_org)
                 save_file(self.path_data, fname, file, test)
+
+                fname_list.append(fname)
                 path_files_list.append(f"{self.path_data}{fname}")
             
-            result = self.process_anyfiles_fg(path_files_list, bgtask, **kwargs)
+            result = self.process_anyfiles_fg(fname_list, bgtask, **kwargs)
 
             bgtask.add_task(remove_files, path_files_list)
             # bgtask.add_task(remove_files, path_files_list, self.sleep_sec_remove)

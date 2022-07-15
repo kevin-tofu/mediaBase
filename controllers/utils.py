@@ -10,6 +10,18 @@ import uuid
 
 # sys.path.append('./mediaBase/')
 
+def remove_file(path_file: str, sleep_sec: int=30) -> None:
+
+    if os.path.exists(path_file) == True:
+        os.unlink(path_file)
+        logger.info(f'removed : {path_file}')
+
+def remove_files(path_files: str, sleep_sec: int=30) -> None:
+
+    for path_file in path_files:
+        if os.path.exists(path_file) == True:
+            os.unlink(path_file)
+            logger.info(f'removed : {path_file}')
 
 def error_handling_image_ext(ext_i):
     extention_image = ext_i in  ('jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'JPG')
